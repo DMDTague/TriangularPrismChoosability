@@ -19,14 +19,14 @@ n4 = {t: D[t] + Q[t] for t in types}
 R = lambda t: int(t[0]); A1 = lambda t: int(t[1]); A3 = lambda t: int(t[2])
 I = lambda t: A1(t) * A3(t)
 
-def total(f):
+def total(f):  # sum over colours of U of indicator f(type)
     return sum(f(t) * (D[t] + P[t] + Q[t]) for t in types)
 
 Ival = total(I) + (k - 1 - total(A1))
 Dsize = k - b
 RL2 = sum(R(t) * n2[t] for t in types); RL4 = sum(R(t) * n4[t] for t in types)
 RD = sum(R(t) * D[t] for t in types)
-M1 = (k - 1) * (k**2 - Dsize) - k * RL2 - k * RL4 + 2 * RD
+M1 = (k - 1) * (k**2 - Dsize) - k * RL2 - k * RL4 + 2 * RD  # sum over pairs c2!=c4 of (k-1-R-R')
 
 def G0(s, t):
     return (k - 1 - R(s) - R(t)) * ((k - 1 - A1(s)) * (k - 1 - A3(t)) + I(s) + I(t))
@@ -51,6 +51,7 @@ print('c0 =', sp.factor(c0), '  paper: -2(k-1)(2k^2-10k+13) ->', sp.expand(c0 + 
 print('number of quadratic monomials with nonzero coef:', len(quad), ' of possible', 71*72//2)
 
 def sign_on(p, lo):
+    # sign of polynomial p on integers >= lo (check 6..9 exactly, then real roots on [10,inf))
     vals = [p.subs(k, v) for v in range(lo, 10)]
     pp = sp.Poly(p, k)
     if pp.is_zero: return 0
@@ -68,18 +69,21 @@ for key, c in quad.items():
 print('nonneg:', len(nonneg), ' nonpos:', len(nonpos), ' mixed:', len(mixed))
 for key, c in mixed[:10]: print('  mixed', [names[i] for i in key], c)
 
+# charging: c*v_i*v_j (i<=j), c<=0, charged c*k to v_j
 lp = dict(lin)
 for key in nonpos:
     i, j = key
     lp[order[max(i, j)]] += quad[key] * k
 lp = {v: sp.expand(e) for v, e in lp.items()}
 
+# parse paper table 3
 tex = (Path(__file__).resolve().parents[1] / 'paper' / 'main.tex').read_text()
 rows = re.findall(r'^\$([DZ])_\{([01]{3})(?:,([01]{3}))?\}\$ & \$(.*?)\$ & \$(.*?)\$ & \$(.*?)\$\\\\', tex, re.M)
 assert len(rows) == 71, len(rows)
 tab = {}
 for kind, t1, t2, l, r10, v10 in rows:
     name = f'D_{t1}' if kind == 'D' else f'Z_{t1}_{t2}'
+    conv = lambda s: sp.sympify(s.replace(' ', '').replace('k^{', 'k**(').replace('}', ')').replace('^', '**').replace('k', '*k').replace('+*k', '+k').replace('-*k', '-k').lstrip('*') if False else s)
     def parse(s):
         s = s.replace(' ', '')
         s = re.sub(r'k\^\{(\d+)\}', r'k**\1', s)
@@ -90,6 +94,7 @@ for kind, t1, t2, l, r10, v10 in rows:
 bad = [n for n in names if sp.expand(lp[sp.Symbol(n)] - tab[n][0]) != 0]
 print('ell_prime mismatches vs Table 3:', bad)
 
+# M columns and y
 def col(name):
     if name.startswith('D_'):
         t = name[2:]
@@ -112,6 +117,7 @@ for yy in ypoly[:1] + ypoly[2:]:
     rr = [float(x) for x in sp.real_roots(sp.Poly(yy, k))]
     print('  y roots', [round(x, 3) for x in rr])
 
+# fixed-k certificates (Table 2)
 fixed = {6: ([66, 0, 87, 130], 33), 7: ([218, 13, 175, 252], 166), 8: ([519, 8, 316, 288], 277),
          9: ([sp.Rational(3048, 5), 0, sp.Rational(4587, 10), sp.Rational(5113, 10)], sp.Rational(1098, 5))}
 for kk, (y, s) in fixed.items():
