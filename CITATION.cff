@@ -6,8 +6,7 @@ authors:
   - family-names: Tague
     given-names: Dylan
 repository-code: "https://github.com/DMDTague/TriangularPrismChoosability"
-version: 1.0.0
-date-released: 2026-09-28
+license: MIT
 keywords:
   - graph coloring
   - list coloring
