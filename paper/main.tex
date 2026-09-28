@@ -596,13 +596,18 @@ configurations with $h<\mathrm{target}$ & 1 & 1 & 1 & 1 & 1 & 1\\
 \end{center}
 
 In each case $\min(h-\mathrm{target})=-\sigma_k$, and the unique configuration below the target is
-$\Delta$. For $6\le k\le 9$ this agrees with the analytic proof. The enumeration has three
-independent implementations. Two of them cover $k\le 9$ and the third covers $k\le7$. All give
-identical results.
+$\Delta$. For $6\le k\le 9$ this agrees with the analytic proof. The proof itself needs the complete
+enumeration only for $k=4,5$. The public reproducibility package supplies the complete enumerator and
+recorded outputs for those two values. During development the same census was also run through $k=9$,
+and two further independent implementations were used as cross-checks on overlapping ranges; all agreed
+with the values in the table. Those additional audit implementations are not part of the public release.
 
 \subsection{Independent verification}
-Every computational step of the proof has been reimplemented independently of the code that produced
-it, and all results agree:
+The proof-critical computations were cross-checked independently during development. The public
+reproducibility package contains a direct rebuild of the dual certificate, symbolic and small-case
+checks of the displayed identities, the complete type enumeration required for $k=4,5$, and direct
+small-universe checks of the full theorem. Additional independent audit implementations were used
+during development but are not included in the public release. All checks agree:
 \begin{itemize}
 \item the counting formula \eqref{eq:shoulder}, compared with brute-force counts of house colourings;
 \item Proposition~\ref{prop:es}, rebuilt symbolically, with the same table of coefficients and the same
@@ -611,17 +616,22 @@ it, and all results agree:
   the $2{,}348/82$ split of the quadratic coefficients and the exact dual inequalities. The certificates
   of Table~\ref{tab:fixedk} were checked by rebuilding the $71$ columns of $M$ from the definition in
   Appendix~\ref{app:ues};
-\item the type enumeration of Section~\ref{sec:computation}, whose three implementations are described
-  there;
+\item the type enumeration of Section~\ref{sec:computation}: the supplied implementation reproduces
+  the proof-critical $k=4,5$ cases, while the additional development implementations agreed on their
+  overlapping ranges;
 \item the identities in Lemma~\ref{lem:cyclebound}, Corollary~\ref{cor:easy},
   Proposition~\ref{prop:equalpairs} and Lemma~\ref{lem:pair}, re-derived symbolically and compared
   with brute-force counts for small $k$;
-\item the whole of Theorem~\ref{thm:main}, compared with brute-force counts of list edge-colourings of
-  $K_{2,3}$ over all $k$-assignments from small colour sets, for $k=3,4,5$.
+\item the whole of Theorem~\ref{thm:main}, compared with direct brute-force counts for normalized
+  small colour universes at $k=3,4,5$; the supplied program and recorded outputs attain respectively
+  $c_3=12$, $c_4=264$ and $c_5=1920$, with no smaller count.
 \end{itemize}
-%% After the Zenodo release, add: "and are archived at https://doi.org/<concept DOI>".
-The scripts, their recorded outputs and the exact reproduction commands are provided as supplementary
-material with this article.
+
+\subsection*{Data and code availability}
+The manuscript source, verification programs, recorded outputs and reproduction commands are publicly
+available at \url{https://github.com/DMDTague/TriangularPrismChoosability}. The archival software
+release will be tagged \texttt{v1.0.0} before submission. Its Zenodo DOI will be inserted here after
+the release has been archived.
 
 % =====================================================================
 \section{Discussion}\label{sec:discussion}
@@ -684,7 +694,7 @@ is $r_v:=\ell'_v-(M^{\mathsf T}y)_v$.
 The following table lists $\ell'_v$, $r_v$ and $r_v(10)$ for all $71$ variables. Each $r_v$ is a cubic
 with positive leading coefficient and no real root in $[10,\infty)$; the largest real root of any
 residual is about $8.35$. The minimum of $r_v(10)$ is $443/2$. Finally
-$c_0+\sum_i y_i=k(3k^2+1)/10$. The table is generated, and every row is checked, by the script
+$c_0+\sum_i y_i=k(3k^2+1)/10$. Every row of the table is checked by the script
 \texttt{certificate\_rebuild.py} in the supplementary material.
 
 % --- begin inlined ues_residuals.tex ---
