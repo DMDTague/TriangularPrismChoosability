@@ -1,0 +1,13 @@
+c0 = -2*(k - 1)*(2*k**2 - 10*k + 13)   paper: -2(k-1)(2k^2-10k+13) -> True
+number of quadratic monomials with nonzero coef: 2430  of possible 2556
+nonneg: 2348  nonpos: 82  mixed: 0
+ell_prime mismatches vs Table 3: []
+c0+sum y = k*(3*k**2 + 1)/10
+residual mismatches: []  largest real root of any residual: 8.351  min r(10): 443/2
+  y roots [7.412]
+  y roots [-8.114]
+  y roots [-6.768]
+k=6: c0=-250, c0+sum y=33 (paper 33), min residual=0, zeros=['D_011', 'D_100', 'Z_011_101']
+k=7: c0=-492, c0+sum y=166 (paper 166), min residual=0, zeros=['D_011', 'D_100', 'Z_000_000', 'Z_000_001']
+k=8: c0=-854, c0+sum y=277 (paper 277), min residual=0, zeros=['Z_000_000', 'Z_000_100', 'Z_010_000', 'Z_010_100', 'Z_011_101', 'Z_100_000', 'Z_100_100']
+k=9: c0=-1360, c0+sum y=1098/5 (paper 1098/5), min residual=1113/10, zeros=[]
