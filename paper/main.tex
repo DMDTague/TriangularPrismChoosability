@@ -1,0 +1,814 @@
+\documentclass[11pt]{amsart}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{booktabs,longtable}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{question}[theorem]{Question}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\Pl}{P_\ell}
+\newcommand{\1}{\mathbf 1}
+
+\title{The triangular prism is enumeratively chromatic-choosable}
+\author{Dylan Tague}
+\address{Thomas Edison State University, Trenton, New Jersey, USA}
+\email{dylan.tague@students.tesu.edu}
+\subjclass[2020]{05C15 (primary); 05C30, 05C31 (secondary)}
+\keywords{list colouring, list colour function, chromatic polynomial, enumerative chromatic-choosability,
+line graph, Galvin's theorem, Cartesian product}
+\date{September 27, 2026}
+
+\begin{document}
+
+\begin{abstract}
+For a graph $G$ and a positive integer $m$, let $P(G,m)$ be the chromatic polynomial and let
+$\Pl(G,m)$ be the minimum number of proper colourings from an assignment of $m$-element lists.
+A graph is \emph{enumeratively chromatic-choosable} if $\Pl(G,m)=P(G,m)$ for every $m$.
+We prove that the triangular prism $K_3\square K_2$ has this property. Since
+$K_3\square K_2$ is the line graph of $K_{2,3}$, the statement is equivalent to an
+enumerative strengthening of Galvin's theorem for $K_{2,3}$: for every $k\ge 3$ and every
+assignment of $k$-element lists to the six edges of $K_{2,3}$, the number of proper list
+edge-colourings is at least $k(k-1)(k-2)(k^3-6k^2+14k-13)$, the number of proper
+$k$-edge-colourings. General threshold results of Dong and Zhang already give the equality for
+$m\ge 8$, so it remains here to establish $3\le m\le 7$. The result is a positive instance, for the
+pair $(K_3,K_2)$, of a question of Kirov and Naimi on Cartesian products of $n$-monophilic graphs.
+The proof reduces the problem to a sharp counting inequality for list colourings of a five-vertex
+``house'' graph, which has a unique extremal list configuration. Two essential steps are computer-assisted
+and verified by exact arithmetic: linear-programming dual certificates, and a finite enumeration of
+membership types for small list sizes. Routine polynomial identities elsewhere were also verified
+symbolically.
+\end{abstract}
+
+\maketitle
+
+% =====================================================================
+\section{Introduction}\label{sec:intro}
+
+Let $G$ be a finite simple graph. A \emph{list assignment} $L$ gives each vertex $v$ a finite set
+$L(v)$ of colours, and an $L$-colouring is a proper colouring $\varphi$ with $\varphi(v)\in L(v)$
+for all $v$. Write $P(G,L)$ for the number of $L$-colourings. If every list has size $m$, then $L$
+is an \emph{$m$-assignment}. The \emph{list colour function} is
+\[
+\Pl(G,m)=\min\{P(G,L): L \text{ an $m$-assignment of } G\}.
+\]
+Giving every vertex the same list shows that $\Pl(G,m)\le P(G,m)$, where $P(G,m)$ is the chromatic
+polynomial. The function $\Pl$ was introduced by Kostochka and Sidorenko~\cite{KS}. Donner~\cite{Donner}
+proved that $\Pl(G,m)=P(G,m)$ for all sufficiently large $m$. The threshold for this equality has been
+bounded by Thomassen~\cite{Thomassen}, by Wang, Qian and Yan~\cite{WQY}, by Dong and
+Zhang~\cite{DZ23}, and, linearly in the maximum degree, by Zhang and Dong~\cite{ZD26}.
+
+Following Allred and Mudrock~\cite{AM} and Chi et al.~\cite{CLMNW}, a graph $G$ is
+\emph{enumeratively chromatic-choosable} if $\Pl(G,m)=P(G,m)$ for every $m\in\mathbb N$. Equality at
+one fixed $m$ is the older notion of an \emph{$m$-monophilic} graph, due to Kirov and Naimi~\cite{KN}.
+Zhang and Dong~\cite{ZD26np} showed that equality at $m$ need not persist to $m+1$, so equality has to
+be established at every $m$ separately. Allred and Mudrock~\cite[Theorem~4]{AM} showed that chordal
+graphs, cycles and $K_{2,3}$ are enumeratively chromatic-choosable, and characterised the enumeratively
+chromatic-choosable graphs of chromatic number two. Chi et al.~\cite{CLMNW} studied theta graphs. All of
+these results concern vertex colourings of the graphs named; in particular, the result for $K_{2,3}$
+concerns $K_{2,3}$ itself and not its line graph, which is the prism studied here.
+
+\subsection*{Line graphs and a question of Kirov and Naimi}
+Galvin~\cite{Galvin} proved that every bipartite multigraph $R$ has list chromatic index $\Delta(R)$. In
+other words, the line graph $L(R)$ is $\chi(L(R))$-choosable. This settled Dinitz's problem, which is
+the case $R=K_{n,n}$. Kirov and Naimi observed that $L(K_{n,n})$ is the Cartesian product
+$K_n\square K_n$, and proposed the following ``other way to generalize the Dinitz Conjecture''.
+
+\begin{question}[{Kirov--Naimi \cite[Question~1]{KN}}]\label{q:KN}
+Is the product of two $n$-monophilic graphs $n$-monophilic?
+\end{question}
+
+Here, as in the preceding observation, the product is the Cartesian product.
+
+They showed that the answer is negative for $n=2$, the product $P_2\square P_3$ being a counterexample,
+and raised the possibility that it is positive for $n\ge 3$. As far as we know the question is open in
+general. A machine-checked formalization project of Kirov~\cite{KirovLean} records it as open and proves
+that $\Pl(G,m)=P(G,m)$ for every $m\ge3$ when $G$ is a ladder $P_2\square P_n$ or a grid $P_3\square P_n$.
+These give positive instances in which both factors are paths. Among products of two nontrivial
+complete graphs, $K_2\square K_2=C_4$ is a cycle and is already covered. A natural first non-cycle case is
+the \emph{triangular prism} $K_3\square K_2$, which is also the line graph $L(K_{2,3})$.
+
+\subsection*{Main result}
+\begin{theorem}\label{thm:main}
+The triangular prism $K_3\square K_2$ is enumeratively chromatic-choosable. Equivalently, for every
+$k\ge 3$ and every assignment $L$ of $k$-element lists to the edges of $K_{2,3}$, the number
+$N_L(K_{2,3})$ of proper $L$-edge-colourings satisfies
+\begin{equation}\label{eq:main}
+N_L(K_{2,3})\ \ge\ c_k:=k(k-1)(k-2)\,(k^3-6k^2+14k-13),
+\end{equation}
+and $c_k$ is the number of proper $k$-edge-colourings of $K_{2,3}$.
+\end{theorem}
+
+In a companion paper~\cite{TagueExact} the author proved that the number of list edge-colourings of a
+left-$k$-regular bipartite multigraph $R$ is at least $c_k(R)$, the number of proper
+$k$-edge-colourings, in the special case of \emph{exact left lists}: all edges at a vertex of one shore
+share a list of size $k$, and every entry must be used. That paper asks~\cite[Question~11.4]{TagueExact} whether the inequality survives for arbitrary per-edge lists.
+Theorem~\ref{thm:main} answers this question for $R=K_{2,3}$. Its proof is independent of the methods
+of~\cite{TagueExact} and uses no result from it.
+
+For $m<3$ both $P(K_3\square K_2,m)$ and $\Pl(K_3\square K_2,m)$ are zero, because the prism contains
+a triangle; so the two formulations agree. Since $K_3$ and $K_2$ are chordal, and hence $3$-monophilic,
+Theorem~\ref{thm:main} answers Question~\ref{q:KN} positively for the particular pair
+$(K_3,K_2)$. It gives no information about the question for other pairs.
+
+\begin{remark}[What was known]\label{rem:known}
+The prism has $9$ edges. Dong and Zhang~\cite{DZ23} proved $\Pl(G,m)=P(G,m)$ for
+$m\ge |E(G)|-1$, which covers the prism for every $m\ge 8$. Kirov's formalization~\cite{KirovLean}
+proves equality for every subcubic graph when $m\ge 15$, and Zhang and Dong~\cite{ZD26} give
+$m\ge 23.41\,\Delta(G)$. Theorem~\ref{thm:main} therefore covers the remaining list sizes $m=3,\dots,7$, including
+the critical value $m=\chi=3$. In our searches we found no earlier source proving any of these cases;
+we have not certified novelty beyond those searches.
+\end{remark}
+
+\subsection*{Strategy}
+Fix the colour $x$ of one edge $uw$ incident with a degree-$3$ vertex. Summing over $x$ writes
+$N_L(K_{2,3})$ as a sum of row counts $S(x)$ (Section~\ref{sec:reduction}). The \emph{deficit} of a row
+is the amount by which it falls short of its common-palette value. The published fact that cycles are
+enumeratively chromatic-choosable disposes of $k=3$ and of every row whose colour is absent from the list
+of the other edge at $w$. Each remaining row is a list-colouring count of a five-vertex ``house''
+graph. The core of the paper is the \emph{House Lemma}
+(Theorem~\ref{thm:house}). It bounds the house count from below by its common-palette value minus
+$2(k-2)(k-3)$, and it shows that falling below the common value forces one explicit list
+configuration $\Delta$. We then compute the deficits of the other rows in configuration $\Delta$
+exactly and show that they pay for the unique possible deficit (Section~\ref{sec:pair}). Summing
+completes the proof (Section~\ref{sec:proof}).
+
+\subsection*{Computer assistance}
+The reduction, the case of equal list pairs (Proposition~\ref{prop:equalpairs}), the localization and
+compensation arguments, and the final assembly are ordinary proofs. Two essential steps use a
+computer, in precisely identified ways:
+\begin{enumerate}[label=(\alph*)]
+\item for unequal shoulder lists and $k\ge 6$ (Proposition~\ref{prop:ues}), explicit
+  linear-programming dual certificates, whose $71$ defining inequalities are verified exactly. For
+  $k\ge9$ the certificate is given by four cubic polynomials, and for $k=6,7,8$ by integer vectors;
+\item for $k\in\{4,5\}$, a complete enumeration of membership types, which covers every list
+  configuration in every colour universe (Section~\ref{sec:computation}). It has $49{,}394$ and
+  $519{,}800$ cases.
+\end{enumerate}
+Routine polynomial identities elsewhere were also verified symbolically. The most substantial of these is
+the expansion of an explicit quadratic polynomial in the equal-shoulder case
+(Proposition~\ref{prop:es}), whose linear coefficients are printed in Table~\ref{tab:esLinear}. All
+computations are exact and have been reimplemented independently; see
+Section~\ref{sec:computation}.
+
+% =====================================================================
+\section{Preliminaries}\label{sec:prelim}
+
+\subsection{The graph and its common count}
+Let $K_{2,3}$ have degree-$3$ vertices $u,v$ and degree-$2$ vertices $a,b,w$. Name its edges
+\[
+e_1=ua,\quad e_2=av,\quad e_3=ub,\quad e_4=bv,\quad e_5=uw,\quad e_6=wv .
+\]
+In the line graph, $\{e_1,e_3,e_5\}$ and $\{e_2,e_4,e_6\}$ are triangles, and the three ``rungs''
+$e_1e_2$, $e_3e_4$, $e_5e_6$ join them. This is the prism $K_3\square K_2$. Throughout, an edge
+colouring means a proper edge colouring, and lists are attached to edges.
+
+\begin{lemma}\label{lem:ck}
+The number of proper $k$-edge-colourings of $K_{2,3}$ is $c_k=(k)_3\,(k^3-6k^2+14k-13)$, where
+$(k)_3=k(k-1)(k-2)$.
+\end{lemma}
+\begin{proof}
+Colour the triangle $e_1,e_3,e_5$ injectively, in $(k)_3$ ways, say with colours $\gamma_1,\gamma_3,\gamma_5$.
+The triangle $e_2,e_4,e_6$ must then be coloured injectively with $e_2\ne\gamma_1$, $e_4\ne\gamma_3$ and
+$e_6\ne\gamma_5$. By inclusion--exclusion over these three conditions the number of ways is
+$(k)_3-3(k-1)(k-2)+3(k-2)-1=k^3-6k^2+14k-13$.
+\end{proof}
+
+We write
+\begin{gather*}
+o_k:=\frac{c_k}{k(k-1)}=(k-2)(k^3-6k^2+14k-13),\\
+d_k:=(k-1)(k-2)(k^2-5k+7),\qquad \sigma_k:=2(k-2)(k-3).
+\end{gather*}
+Note that $d_k=(k-2)^4+(k-2)=P(C_4,k-1)$, that $o_k-d_k=\sigma_k$, and that $d_3=o_3=2$.
+
+\subsection{Two basic facts}
+\begin{enumerate}[label=(F\arabic*)]
+\item\label{F:mono} \emph{Monotonicity.} Enlarging lists cannot decrease the number of list colourings.
+In particular, if $|L(v)|\ge m$ for every vertex, then $P(G,L)\ge \Pl(G,m)$.
+\item\label{F:cycle} \emph{Cycles.} Cycles are enumeratively chromatic-choosable
+\cite[Theorem~4(ii)]{AM}. In particular, if $|L(v)|\ge m$ for every vertex of $C_4$, then
+$P(C_4,L)\ge (m-1)^4+(m-1)$.
+\end{enumerate}
+
+% =====================================================================
+\section{Row kernels and deficits}\label{sec:reduction}
+
+Fix a $k$-assignment $L$ of $E(K_{2,3})$, with $k\ge3$, and put $A=L(e_5)$ and $B=L(e_6)$. The edges
+$e_1,e_2,e_3,e_4$ form a $4$-cycle $Q$ through $u$ and $v$. For colours $x,y$, let $F(x,y)$ be the
+number of proper colourings of $Q$ from its lists in which $x$ appears on neither $e_1$ nor $e_3$ (the
+edges of $Q$ at $u$), and $y$ appears on neither $e_2$ nor $e_4$ (the edges of $Q$ at $v$).
+
+\begin{lemma}\label{lem:glue}
+$N_L(K_{2,3})=\sum_{x\in A}S(x)$, where $S(x):=\sum_{y\in B\setminus\{x\}}F(x,y)$.
+\end{lemma}
+\begin{proof}
+A colouring of $K_{2,3}$ is determined by the colours $x$ of $e_5$ and $y$ of $e_6$, with $x\neq y$
+because the two edges share $w$, together with a colouring of $Q$. The only other conflicts are between
+$e_5$ and the $Q$-edges at $u$, and between $e_6$ and the $Q$-edges at $v$.
+\end{proof}
+
+For the common palette, $F(x,y)$ takes the same value $F^*$ for all $x\ne y$, by symmetry. Applying
+Lemma~\ref{lem:glue} to the common assignment gives $k(k-1)F^*=c_k$, so $F^*=o_k$. For the given
+assignment $L$ define the \emph{deficit} of a colour $x$ by
+\[
+\delta_x:=(k-1)o_k-S(x).
+\]
+(The quantity $\delta_x$ is defined for every colour $x$, but only the rows
+$x\in A$ enter the count.) Then $N_L(K_{2,3})=c_k-\sum_{x\in A}\delta_x$, so Theorem~\ref{thm:main} is equivalent to
+\begin{equation}\label{eq:deficits}
+\sum_{x\in A}\delta_x\le 0 .
+\end{equation}
+
+\begin{lemma}[Cycle bound]\label{lem:cyclebound}
+$F(x,y)\ge d_k$ for all colours $x,y$.
+\end{lemma}
+\begin{proof}
+Delete $x$ from the lists of $e_1$ and $e_3$, and $y$ from the lists of $e_2$ and $e_4$. Each edge of
+$Q$ is incident with exactly one of $u,v$, so each list loses at most one colour and keeps at least
+$k-1$. The line graph of $Q$ is $C_4$, so \ref{F:cycle} gives at least $P(C_4,k-1)=d_k$ colourings.
+\end{proof}
+
+\begin{corollary}\label{cor:easy}
+\begin{enumerate}[label=(\roman*)]
+\item If $k=3$, then $\delta_x\le 0$ for every $x\in A$. Hence Theorem~\ref{thm:main} holds for $k=3$.
+\item If $x\in A\setminus B$, then $\delta_x\le -(k-1)(k-2)(k^2-7k+13)<0$.
+\end{enumerate}
+\end{corollary}
+\begin{proof}
+The sum defining $S(x)$ has at least $k-1$ terms, each at least $d_k$ by Lemma~\ref{lem:cyclebound}.
+For $k=3$, $d_3=o_3$, which gives (i). If $x\notin B$, the sum has $k$ terms, so
+$S(x)\ge k\,d_k$, and $k\,d_k-(k-1)o_k=(k-1)(k-2)(k^2-7k+13)$. The quadratic $k^2-7k+13$ has negative
+discriminant, which gives (ii).
+\end{proof}
+
+\subsection{\texorpdfstring{Rows in $B$ are house counts}{Rows in B are house counts}}
+The \emph{house} $H$ is the line graph of a $4$-cycle with a pendant edge. Its vertices are two
+\emph{base} vertices $\beta_1,\beta_3$, two \emph{shoulder} vertices $s_2,s_4$ and a \emph{roof} $\rho$,
+and its edges are $\beta_1\beta_3$, $\beta_1s_2$, $\beta_3s_4$, $s_2s_4$, $s_2\rho$ and $s_4\rho$.
+A \emph{house assignment} is a tuple $(A_1,A_3,L_2,L_4,R)$ of lists on
+$(\beta_1,\beta_3,s_2,s_4,\rho)$. We write $h(A_1,A_3,L_2,L_4,R)$ for its number of colourings.
+
+\begin{lemma}\label{lem:rowhouse}
+For $x\in A\cap B$, $S(x)=h\bigl(L(e_1)\setminus\{x\},\,L(e_3)\setminus\{x\},\,L(e_2),\,L(e_4),\,B\setminus\{x\}\bigr)$.
+\end{lemma}
+\begin{proof}
+Summing over $y\in B\setminus\{x\}$ amounts to colouring a pendant edge at $v$, adjacent to $e_2$ and
+$e_4$, from the list $B\setminus\{x\}$. Excluding $x$ at $u$ amounts to deleting $x$ from the lists of
+$e_1$ and $e_3$. The resulting graph is the $4$-cycle $Q$ with a pendant edge at $v$, whose line graph
+is $H$.
+\end{proof}
+
+In Lemma~\ref{lem:rowhouse} the roof list has size $k-1$, the shoulder lists have size $k$, and each
+base list has size $k-1$ or $k$.
+
+% =====================================================================
+\section{The House Lemma}\label{sec:house}
+
+\begin{theorem}[House Lemma]\label{thm:house}
+Let $k\ge4$, and let $(A_1,A_3,L_2,L_4,R)$ be a house assignment with $|L_2|=|L_4|=k$, $|R|=k-1$ and
+$|A_1|,|A_3|\in\{k-1,k\}$. Then
+\[
+h(A_1,A_3,L_2,L_4,R)\ \ge\ (k-1)o_k-\sigma_k .
+\]
+If moreover $h<(k-1)o_k$, then $|A_1|=|A_3|=k-1$ and the assignment is the configuration $\Delta$:
+there are a $(k-1)$-set $C$, a colour $\gamma\notin C$ and a colour $c_0\in C$ with
+\[
+A_1=A_3=C,\qquad L_2=L_4=C\cup\{\gamma\},\qquad R=(C\setminus\{c_0\})\cup\{\gamma\}.
+\]
+\end{theorem}
+
+The proof occupies the rest of this section. Write $\mathrm{target}=(k-1)o_k$.
+
+\subsection{Reduction to exact sizes}
+\begin{lemma}\label{lem:size}
+If $|A_1|=k$ or $|A_3|=k$, then $h\ge\mathrm{target}$, provided the House Lemma holds for base lists
+of size exactly $k-1$.
+\end{lemma}
+\begin{proof}
+Suppose $|A_1|=k$. Choose any $(k-1)$-subset $C_3\subseteq A_3$. Since $|A_1|>|C_3|$, there is a colour
+$a\in A_1\setminus C_3$. Let $C_1$ consist of $a$ and any $k-2$ further elements of $A_1$. Then
+$|C_1|=|C_3|=k-1$ and $C_1\ne C_3$ because $a\in C_1\setminus C_3$. By \ref{F:mono},
+$h(A_1,A_3,L_2,L_4,R)\ge h(C_1,C_3,L_2,L_4,R)$. The right-hand assignment has unequal base lists, so it
+is not $\Delta$, and by the exact-size case its count is at least the target. The case $|A_3|=k$ is
+symmetric.
+\end{proof}
+
+By Lemma~\ref{lem:size} it suffices to prove Theorem~\ref{thm:house} when
+\begin{equation}\label{eq:sizes}
+|A_1|=|A_3|=|R|=k-1,\qquad |L_2|=|L_4|=k,
+\end{equation}
+which we assume from now on. Put $I=A_1\cap A_3$ and write $\1_X$ for the indicator function of a set $X$.
+
+\subsection{The shoulder-first formula}
+\begin{lemma}\label{lem:shoulder}
+Under \eqref{eq:sizes},
+\begin{multline}\label{eq:shoulder}
+h=\sum_{\substack{c_2\in L_2,\ c_4\in L_4\\ c_2\neq c_4}}
+\bigl(k-1-\1_R(c_2)-\1_R(c_4)\bigr)\\
+\times\Bigl[(k-1-\1_{A_1}(c_2))(k-1-\1_{A_3}(c_4))-|I|+\1_I(c_2)+\1_I(c_4)\Bigr].
+\end{multline}
+\end{lemma}
+\begin{proof}
+Colour the shoulders first, with $c_2\ne c_4$. The roof must avoid both, which leaves
+$k-1-\1_R(c_2)-\1_R(c_4)$ choices. The base vertex $\beta_1$ must avoid $c_2$, and $\beta_3$ must avoid
+$c_4$ and the colour of $\beta_1$. The ordered pairs from $(A_1\setminus c_2)\times(A_3\setminus c_4)$
+number $(k-1-\1_{A_1}(c_2))(k-1-\1_{A_3}(c_4))$. Among them, those with equal entries correspond to the
+colours of $I\setminus\{c_2,c_4\}$, and there are $|I|-\1_I(c_2)-\1_I(c_4)$ of these, because
+$c_2\neq c_4$.
+\end{proof}
+
+Only the colours of $U=L_2\cup L_4$ enter \eqref{eq:shoulder} individually. Colours outside $U$ enter
+only through $|I|$. Moreover, $h$ is affine in $|I|$ with coefficient
+$-\sum_{c_2\ne c_4}(k-1-\1_R(c_2)-\1_R(c_4))\le -(k^2-k)(k-3)<0$. We therefore have the following.
+
+\begin{lemma}\label{lem:Ibound}
+Let $h^{\sharp}$ be the value of \eqref{eq:shoulder} with $|I|$ replaced by
+$|I\cap U|+\min\{|A_1\setminus U|,|A_3\setminus U|\}$. Then $h\ge h^{\sharp}$.
+\end{lemma}
+\begin{proof}
+We have $I\setminus U\subseteq A_1\setminus U$ and $I\setminus U\subseteq A_3\setminus U$, so $|I|$ is at
+most the substituted value. The coefficient of $|I|$ is negative.
+\end{proof}
+
+We treat three cases: equal list pairs, equal shoulders with unequal bases, and unequal shoulders.
+
+\subsection{\texorpdfstring{Equal pairs: $L_2=L_4$ and $A_1=A_3$}{Equal pairs}}
+\begin{proposition}\label{prop:equalpairs}
+Let $L_2=L_4=V$ and $A_1=A_3=A$ satisfy \eqref{eq:sizes}, and put $r=|A\cap V|\in\{0,\dots,k-1\}$. Then
+$h\ge\mathrm{target}-\sigma_k$. Moreover $h<\mathrm{target}$ only when $r=k-1$ and $R$ consists of
+the unique colour $\gamma$ of $V\setminus A$ together with $k-2$ colours of $A$, that is, only in
+configuration $\Delta$; there $h=\mathrm{target}-\sigma_k$.
+\end{proposition}
+\begin{proof}
+Condition on the roof colour $y\in R$. The remaining $4$-cycle has base lists $A$ and shoulder lists
+$V\setminus\{y\}$. Its colourings are ordered pairs of distinct base colours and ordered pairs of distinct
+shoulder colours, excluding coincidences across the two rungs. By inclusion--exclusion over those two
+coincidences, $y$ contributes
+\[
+f(y)=p(p-1)q(q-1)-2t(p-1)(q-1)+t(t-1),\qquad p=k-1,\ q=|V\setminus\{y\}|,\ t=|(A\cap V)\setminus\{y\}|,
+\]
+and $h=\sum_{y\in R}f(y)$. There are three types of colour $y$:
+\[
+\begin{aligned}
+f_{C}&=(k-1)^2(k-2)^2-2(r-1)(k-2)^2+(r-1)(r-2) &&(y\in A\cap V),\\
+f_{V}&=(k-1)^2(k-2)^2-2r(k-2)^2+r(r-1) &&(y\in V\setminus A),\\
+f_{O}&=k(k-1)^2(k-2)-2r(k-1)(k-2)+r(r-1) &&(y\notin V).
+\end{aligned}
+\]
+Here $f_C-f_V=2\bigl((k-2)^2-(r-1)\bigr)\ge0$. Also $f_O-f_C$ is affine in $r$ and positive at $r=0$ and at
+$r=k-1$ for $k\ge4$, so $f_O\ge f_C\ge f_V$ for all $r$. Hence $h$ is minimised by choosing $R$ greedily: first the $k-r$ colours of
+$V\setminus A$, then colours of $A\cap V$. For $r\ge1$ this gives $h\ge(k-r)f_V+(r-1)f_C$, and for $r=0$
+it gives $h\ge(k-1)f_V$. The maximal deficit $D(r)=\mathrm{target}-\bigl((k-r)f_V+(r-1)f_C\bigr)$
+satisfies:
+\begin{itemize}
+\item it is a quadratic in $r$ with leading coefficient $3-k<0$;
+\item $D'(k-1)=(k-3)(2k^2-8k+9)>0$ for $k\ge4$, so $D$ is increasing on $[1,k-1]$;
+\item $D(k-1)=\sigma_k$, while $D(k-2)=-2(k-3)(k^2-5k+7)<0$;
+\item the $r=0$ value is $-(k-1)(k-2)(2k^2-9k+11)<0$.
+\end{itemize}
+Hence a deficit requires $r=k-1$, i.e.\ $A\subset V$ and $V=A\cup\{\gamma\}$. In that case the greedy
+roof is $\{\gamma\}\cup(k-2 \text{ colours of } A)$. Any other roof either omits $\gamma$, which raises
+$h$ by at least $f_C-f_V=\sigma_k$, or uses a colour outside $V$, which raises it by at least
+$f_O-f_C=2(k-2)(k^2-4k+5)>\sigma_k$ (values at $r=k-1$). Either way the deficit is removed. All the displayed polynomial identities are
+routine to check; see Section~\ref{sec:computation}.
+\end{proof}
+
+\subsection{Equal shoulders, unequal bases}
+\begin{proposition}\label{prop:es}
+If $L_2=L_4=V$ and $A_1\ne A_3$ satisfy \eqref{eq:sizes}, then
+$h\ \ge\ \mathrm{target}+q_k$, where $q_k=k^3-8k^2+24k-25>0$.
+Equality is attained when $A_1,A_3,R$ are $V$ minus three distinct colours.
+\end{proposition}
+
+\begin{proof}
+Classify the $k$ colours of $V$ by their membership in $(R,A_1,A_3)$, writing $n_{\tau}$ for the number
+of colours of type $\tau\in\{0,1\}^3$. We have $n_{111}=k-\sum_{\tau\neq111}n_\tau$. Every membership statistic entering
+\eqref{eq:shoulder}, other than $|I|$, is linear in these counts. Swapping $A_1$ and $A_3$ is a symmetry
+of $H$ when $L_2=L_4$, so we may assume $|A_1\cap V|\ge|A_3\cap V|$. By Lemma~\ref{lem:Ibound} we may
+take $|I|=|I\cap V|+(k-1-|A_1\cap V|)$.
+
+\emph{Case A: $A_1\cap V\ne A_3\cap V$.}
+Substituting $k=4+m$, the quantity $F=h^\sharp-\mathrm{target}-q_k$ becomes a quadratic polynomial in
+the seven counts $n_\tau$ ($\tau\ne111$), with coefficients in $\mathbb Z[m]$. Its constant term is
+$-(5m^3+28m^2+54m+37)$, and \emph{every other coefficient is a polynomial in $m$ with nonnegative
+coefficients}. Table~\ref{tab:esLinear} lists the linear coefficients. Each of the $25$ nonzero quadratic
+coefficients has the form $am+b$ with integers $a\ge1$ and $b\ge0$. Hence $F$ is nondecreasing in each count. The constraints force three
+conditions:
+\begin{itemize}
+\item an $A_1$-only colour in $V$ (a type $010$ or $110$), since $|A_1\cap V|\ge|A_3\cap V|$ and the
+  two sets differ;
+\item a colour of $V$ missing from $A_1$, since $|A_1|=k-1$;
+\item a colour of $V$ missing from $R$, since $|R|=k-1$.
+\end{itemize}
+The minimal count vectors satisfying these hitting conditions are $0/1$-vectors supported on one of
+eight sets. At each of them $F$ is a polynomial with nonnegative coefficients in $m$:
+\[
+\begin{array}{ll@{\qquad}ll}
+\{011,101,110\}: & 0, & \{000,010\}: & 3k^3-15k^2+25k-12,\\
+\{011,100,110\}: & (k-2)^3, & \{000,110\}: & k^3-4k^2+2k+5,\\
+\{001,110\}: & (k-3)^2, & \{001,010\}: & 2(k^3-5k^2+8k-3),\\
+\{010,101\}: & (k-3)^2, & \{010,100\}: & k^3-5k^2+6k+1.
+\end{array}
+\]
+
+\emph{Case B: $A_1\cap V=A_3\cap V$ but $A_1\ne A_3$.}
+Only the types $000,100,011,111$ occur, and $j\ge1$ colours of $A_1\setminus V$ are not in $A_3$. Then
+$G=h-\mathrm{target}-q_k$ is linear in $j$, with slope $(k-1)(k^2-3k+2n_{000}+2n_{011})>0$. At $j=1$ it is
+nondecreasing in $(n_{000},n_{100},n_{011})$, subject to $n_{000}+n_{100}\ge2$ and $n_{000}+n_{011}\ge1$. The first constraint holds because
+$|A_1\setminus V|=n_{000}+n_{100}-1$ must be at least $j=1$. The second holds because $R$ misses a colour
+of $V$.
+The three minimal vectors give
+\begin{gather*}
+(1,1,0):\ 2k^3-10k^2+15k-5,\qquad (2,0,0):\ (k-1)(4k^2-16k+19),\\ (0,2,1):\ 2k^3-12k^2+25k-19,
+\end{gather*}
+all positive for $k\ge4$.
+\end{proof}
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabular}{@{}ll@{\qquad}ll@{}}
+\toprule
+count & coefficient in $F$ ($k=4+m$) & count & coefficient in $F$ ($k=4+m$)\\
+\midrule
+$n_{110}$ & $2(m+1)(m+2)(m+3)$ & $n_{010}$ & $4m^3+25m^2+48m+30$\\
+$n_{101}$ & $m(m+1)(m+3)$ & $n_{001}$ & $3m^3+17m^2+29m+18$\\
+$n_{100}$ & $(m+1)(2m^2+8m+5)$ & $n_{000}$ & $4m^3+24m^2+43m+25$\\
+$n_{011}$ & $2(m+3)(m^2+3m+3)$ & constant & $-(5m^3+28m^2+54m+37)$\\
+\bottomrule
+\end{tabular}
+\caption{Linear coefficients of $F$ in Case A of Proposition~\ref{prop:es}.}
+\label{tab:esLinear}
+\end{table}
+
+\subsection{Unequal shoulders}
+\begin{proposition}\label{prop:ues}
+If $L_2\ne L_4$ and \eqref{eq:sizes} holds, then $h\ge\mathrm{target}$ for every $k\ge 6$.
+\end{proposition}
+
+\begin{proof}[Proof outline]
+Put $D=L_2\cap L_4$, $P=L_2\setminus L_4$ and $Q=L_4\setminus L_2$. Then $|P|=|Q|=b\ge1$, and we fix a
+bijection $P\to Q$. The variables are:
+\begin{itemize}
+\item seven counts $D_\tau$ of colours of $D$ by type $\tau\in\{0,1\}^3\setminus\{111\}$, where types
+  record membership in $(R,A_1,A_3)$;
+\item $64$ counts $Z_{\tau,\tau'}$ of paired colours whose $P$-member has type $\tau$ and whose
+  $Q$-member has type $\tau'$.
+\end{itemize}
+Then $D_{111}=k-\sum D_\tau-\sum Z$, so every variable lies in $[0,k]$, and $|L_4|=k$ holds automatically.
+All intersection statistics in \eqref{eq:shoulder} are linear in these $71$ variables. Since
+$|I\setminus U|\le|A_1\setminus U|=k-1-|A_1\cap U|$ and the coefficient of $|I|$ is negative, we may
+replace $|I|$ by $|I\cap U|+(k-1-|A_1\cap U|)$, as in Lemma~\ref{lem:Ibound}. After this substitution the
+quantity $F_0=h^\sharp-\mathrm{target}$ is a quadratic polynomial in the
+$71$ variables with coefficients in $\mathbb Z[k]$.
+\begin{enumerate}[label=(\arabic*)]
+\item Of the $2{,}556$ possible quadratic monomials, $126$ have identically zero coefficient. For every integer $k\ge6$, the remaining $2{,}430$ coefficients split as follows: $2{,}348$ are nonnegative and $82$ are nonpositive. The two sets of monomials do not depend on $k$: this is checked at $k=6,7,8,9$, and
+  on $[10,\infty)$ no coefficient changes sign. We drop the nonnegative terms. For the nonpositive ones we use $c\,xy\ge c\,k\,y$, which holds because
+  $c\le0$ and $0\le x\le k$. This gives $F_0\ge c_0+\sum_v \ell'_v v$ with
+  $c_0=-2(k-1)(2k^2-10k+13)$.
+\item Every configuration satisfies four linear constraints $Mv\ge\1$:
+  \begin{itemize}
+  \item $b=\sum Z\ge1$;
+  \item for each $X\in\{A_1,A_3,R\}$, $\#\{c\in U: c\notin X\}-b\ge1$, because $|U|=k+b$ and $|X|=k-1$.
+  \end{itemize}
+\item For $k\ge 9$, the multipliers
+\[
+\begin{aligned}
+y_b&=\tfrac{1}{10}\bigl(9k^3+9k^2+1867k-17997\bigr), & y_{A_1}&=0,\\
+y_{A_3}&=\tfrac{1}{10}\bigl(17k^3-133k^2-869k+10788\bigr), & y_R&=\tfrac{1}{10}\bigl(17k^3-116k^2-537k+6949\bigr)
+\end{aligned}
+\]
+  are nonnegative and satisfy $\ell'_v\ge(M^{\mathsf T}y)_v$ for all $71$ variables, and
+  $c_0+\sum y=k(3k^2+1)/10>0$. For $k=6,7,8$, the integer multipliers of Table~\ref{tab:fixedk} do
+  the same.
+\end{enumerate}
+Consequently, since $y\ge0$ and $Mv\ge\1$,
+\[
+F_0\ \ge\ c_0+\ell'\!\cdot v\ \ge\ c_0+y\cdot Mv\ \ge\ c_0+\textstyle\sum y>0.
+\]
+For $k\ge10$ the $71$ inequalities and the sign conditions are identities in $\mathbb Q[k]$. They are
+decided exactly by positivity of the leading coefficient together with real-root isolation on
+$[10,\infty)$. For $k=6,\dots,9$ they are finitely many rational inequalities, evaluated exactly. See
+Appendix~\ref{app:ues}.
+\end{proof}
+
+\subsection{Proof of Theorem~\ref{thm:house}}
+By Lemma~\ref{lem:size} we may assume \eqref{eq:sizes}. For $k\ge6$ the three cases are covered by
+Propositions~\ref{prop:equalpairs}, \ref{prop:es} and~\ref{prop:ues}. For $k\in\{4,5\}$ the whole
+statement is verified by the complete type enumeration of Section~\ref{sec:computation}. (That
+enumeration also re-proves the equal-pair and equal-shoulder cases for these $k$.) \qed
+
+% =====================================================================
+\section{Localization and compensation}\label{sec:pair}
+
+\begin{lemma}[Localization]\label{lem:local}
+Let $k\ge4$, and suppose $\delta_x>0$ for some $x\in A\cap B$. Then there are a $(k-1)$-set $C$, a colour
+$\gamma\notin C\cup\{x\}$ and a colour $c_0\in C$ such that
+\[
+L(e_1)=L(e_3)=C\cup\{x\},\quad L(e_2)=L(e_4)=C\cup\{\gamma\},\quad B=\{x,\gamma\}\cup(C\setminus\{c_0\}),
+\]
+and $\delta_x=\sigma_k$.
+\end{lemma}
+\begin{proof}
+By Lemma~\ref{lem:rowhouse}, $S(x)$ is a house count with roof $B\setminus\{x\}$. A positive deficit means
+$S(x)<\mathrm{target}$. By Theorem~\ref{thm:house}, both base lists $L(e_i)\setminus\{x\}$ have size
+$k-1$, so $x\in L(e_1)\cap L(e_3)$, and the house assignment is $\Delta$. We have $\gamma\ne x$ because
+$\gamma\in B\setminus\{x\}$. The value of $\delta_x$ comes from Proposition~\ref{prop:equalpairs}.
+\end{proof}
+
+\begin{lemma}[Compensation]\label{lem:pair}
+In the configuration of Lemma~\ref{lem:local}, every $x'\in B\setminus\{x\}$ satisfies
+$\delta_x+\delta_{x'}<0$.
+\end{lemma}
+\begin{proof}
+Put $P=C\cup\{x\}$ and $V=C\cup\{\gamma\}$, so that $L(e_1)=L(e_3)=P$ and $L(e_2)=L(e_4)=V$. By the
+inclusion--exclusion count in the proof of Proposition~\ref{prop:equalpairs}, for colours $x'\ne y$
+\[
+F(x',y)=p(p-1)q(q-1)-2t(p-1)(q-1)+t(t-1),
+\]
+where $p=|P\setminus\{x'\}|$, $q=|V\setminus\{y\}|$ and $t=|(P\cap V)\setminus\{x',y\}|$. The other rows of $B$ are $\gamma$ and the $k-2$ colours
+$c\in C\setminus\{c_0\}$. Summing the kernel over $y\in B\setminus\{x'\}$ gives
+\[
+\delta_\gamma=-2(k^4-5k^3+10k^2-8k+1),\qquad \delta_c=-2(2k^3-13k^2+31k-27).
+\]
+Hence
+\[
+\delta_x+\delta_\gamma=-2(k^4-5k^3+9k^2-3k-5)<0\quad\text{and}\quad
+\delta_x+\delta_c=-2(2k^3-14k^2+36k-33)<0\quad(k\ge4).
+\]
+Both polynomials have positive coefficients after the substitution $k=4+m$.
+\end{proof}
+
+% =====================================================================
+\section{Proof of Theorem~\ref{thm:main}}\label{sec:proof}
+
+For $k=3$ use Corollary~\ref{cor:easy}(i). Let $k\ge4$ and put $q=|A\cap B|$. By
+Corollary~\ref{cor:easy}(ii), rows $x\in A\setminus B$ have
+$\delta_x\le-(k-1)(k-2)(k^2-7k+13)<0$. By Theorem~\ref{thm:house} and Lemma~\ref{lem:rowhouse}, rows
+$x\in A\cap B$ have $\delta_x\le\sigma_k$. By Lemma~\ref{lem:local}, at most one row is positive, because
+a positive row determines the configuration, and in it every other row of $B$ is negative by
+Lemma~\ref{lem:pair}.
+\begin{itemize}
+\item If $q=0$, every term of \eqref{eq:deficits} is negative.
+\item If $q=1$, the single inside row contributes at most $\sigma_k$. There are $k-1\ge1$ outside rows,
+  each contributing at most $-(k-1)(k-2)(k^2-7k+13)$, and
+  $(k-1)(k-2)(k^2-7k+13)-\sigma_k=(k-2)(k^3-8k^2+18k-7)>0$ for $k\ge4$.
+\item If $q\ge2$ and some inside row $x$ is positive, pair it with any other inside row $x'$. Then
+  $\delta_x+\delta_{x'}<0$ by Lemma~\ref{lem:pair}, and all remaining rows are nonpositive. If no row is
+  positive, the sum is nonpositive trivially.
+\end{itemize}
+In every case $\sum_{x\in A}\delta_x\le0$, which is \eqref{eq:deficits}. \qed
+
+% =====================================================================
+\section{Computation and reproducibility}\label{sec:computation}
+
+\subsection{\texorpdfstring{Complete type enumeration for $k\in\{4,5\}$}{Complete type enumeration for k=4,5}}
+By \eqref{eq:shoulder}, the house count under \eqref{eq:sizes} depends only on
+the following data:
+\begin{itemize}
+\item the number of colours of $U=L_2\cup L_4$ of each of the $24$ types, where a type records
+  membership in $L_2$ only, $L_4$ only or both, and membership in each of $R$, $A_1$, $A_3$;
+\item the overlap $|I\setminus U|$, which ranges over $0,\dots,\min\{|A_1\setminus U|,|A_3\setminus U|\}$.
+\end{itemize}
+Every feasible value enumerated is realized with fresh colours, so enumerating it covers every house
+assignment in every colour universe. The proof needs this only for $k=4$ and $k=5$, where no multipliers of the kind used in
+Proposition~\ref{prop:ues} exist (the corresponding dual linear program is infeasible). As a consistency check we ran it through
+$k=9$.
+
+\begin{center}\small
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+$k$ & 4 & 5 & 6 & 7 & 8 & 9\\
+\midrule
+type configurations & 49{,}394 & 519{,}800 & 4{,}231{,}446 & 28{,}203{,}597 & 159{,}948{,}947 & 793{,}435{,}085\\
+$\min(h-\mathrm{target})$ & $-4$ & $-12$ & $-24$ & $-40$ & $-60$ & $-84$\\
+configurations with $h<\mathrm{target}$ & 1 & 1 & 1 & 1 & 1 & 1\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+In each case $\min(h-\mathrm{target})=-\sigma_k$, and the unique configuration below the target is
+$\Delta$. For $6\le k\le 9$ this agrees with the analytic proof. The enumeration has three
+independent implementations. Two of them cover $k\le 9$ and the third covers $k\le7$. All give
+identical results.
+
+\subsection{Independent verification}
+Every computational step of the proof has been reimplemented independently of the code that produced
+it, and all results agree:
+\begin{itemize}
+\item the counting formula \eqref{eq:shoulder}, compared with brute-force counts of house colourings;
+\item Proposition~\ref{prop:es}, rebuilt symbolically, with the same table of coefficients and the same
+  minimal patterns;
+\item Proposition~\ref{prop:ues}. The polynomial certificate was re-derived twice, each time including
+  the $2{,}348/82$ split of the quadratic coefficients and the exact dual inequalities. The certificates
+  of Table~\ref{tab:fixedk} were checked by rebuilding the $71$ columns of $M$ from the definition in
+  Appendix~\ref{app:ues};
+\item the type enumeration of Section~\ref{sec:computation}, whose three implementations are described
+  there;
+\item the identities in Lemma~\ref{lem:cyclebound}, Corollary~\ref{cor:easy},
+  Proposition~\ref{prop:equalpairs} and Lemma~\ref{lem:pair}, re-derived symbolically and compared
+  with brute-force counts for small $k$;
+\item the whole of Theorem~\ref{thm:main}, compared with brute-force counts of list edge-colourings of
+  $K_{2,3}$ over all $k$-assignments from small colour sets, for $k=3,4,5$.
+\end{itemize}
+%% After the Zenodo release, add: "and are archived at https://doi.org/<concept DOI>".
+The scripts, their recorded outputs and the exact reproduction commands are provided as supplementary
+material with this article.
+
+% =====================================================================
+\section{Discussion}\label{sec:discussion}
+
+The prism is $L(K_{2,3})=L(\Theta(2,2,2))$. Two natural families contain it:
+\begin{itemize}
+\item the line graphs $L(K_{2,n})=K_n\square K_2$, which bear on Question~\ref{q:KN} for the pairs
+  $(K_n,K_2)$;
+\item the line graphs of the theta graphs $\Theta(2,2,\ell)$ with $\ell$ even.
+\end{itemize}
+The gluing identity of Lemma~\ref{lem:glue} extends formally to both families. For
+$\Theta(2,2,\ell)$ the path $uwv$ is replaced by a longer path, and for $K_{2,n}$ the $4$-cycle kernel is
+replaced by the kernel of $K_{2,n-1}$. The difficulty lies in finding the analogue of the House Lemma. We leave both families to future work. More generally, one may ask whether
+$L(R)$ is enumeratively chromatic-choosable for every bipartite graph $R$; at $m=\Delta(R)$ this is the
+per-edge question of~\cite{TagueExact}. By Galvin's theorem this
+would be an enumerative strengthening of the list edge-colouring theorem for bipartite graphs.
+The general thresholds \cite{DZ23,ZD26,KirovLean} cover large list sizes. We found no result that covers
+the critical case $m=\Delta(R)$ in general.
+
+\appendix
+\section{The certificate of Proposition~\ref{prop:ues}}\label{app:ues}
+
+\paragraph{Multiplier provenance.}
+For fixed $k$, the four dual multipliers solve a rational linear feasibility problem with the
+$71$ inequalities $M^\top y\le\ell'$. The polynomial certificate was obtained from exact rational
+solutions at several integer values in the stable range and interpolation in $k$. This discovery
+step is not part of the proof: for every $k\ge10$, nonnegativity of the multipliers and all $71$
+residual inequalities are verified independently by exact polynomial arithmetic and real-root
+isolation on $[10,\infty)$.
+
+The constraint matrix $M$ has one row for each constraint $b\ge1$, $A_1$-miss, $A_3$-miss and $R$-miss.
+Encode a type $\tau$ as $(\tau_R,\tau_{A_1},\tau_{A_3})$. The column of $D_\tau$ is
+$(0,\,1-\tau_{A_1},\,1-\tau_{A_3},\,1-\tau_R)$. The column of $Z_{\tau,\tau'}$ is
+\[
+\bigl(1,\ (1-\tau_{A_1})+(1-\tau'_{A_1})-1,\ (1-\tau_{A_3})+(1-\tau'_{A_3})-1,\ (1-\tau_R)+(1-\tau'_R)-1\bigr).
+\]
+\begin{table}[ht]\centering\small
+\begin{tabular}{@{}lrrrrrrl@{}}
+\toprule
+$k$ & $y_b$ & $y_{A_1}$ & $y_{A_3}$ & $y_R$ & $c_0$ & $c_0+\sum y$ & residuals equal to $0$\\
+\midrule
+6 & 66 & 0 & 87 & 130 & $-250$ & 33 & $D_{011},D_{100},Z_{011,101}$\\
+7 & 218 & 13 & 175 & 252 & $-492$ & 166 & $D_{011},D_{100},Z_{000,000},Z_{000,001}$\\
+8 & 519 & 8 & 316 & 288 & $-854$ & 277 & seven $Z$-variables$^{*}$\\
+9 & $\tfrac{3048}{5}$ & 0 & $\tfrac{4587}{10}$ & $\tfrac{5113}{10}$ & $-1360$ & $\tfrac{1098}{5}$ & none (minimum $\tfrac{1113}{10}$)\\
+\bottomrule
+\end{tabular}
+\caption{Certificates of Proposition~\ref{prop:ues} for $6\le k\le 9$. The row $k=9$ is the polynomial
+certificate evaluated at $k=9$. Every residual $r_v=\ell'_v-(M^{\mathsf T}y)_v$ is nonnegative.
+$^{*}$These are $Z_{000,000}$, $Z_{000,100}$, $Z_{010,000}$, $Z_{010,100}$, $Z_{011,101}$, $Z_{100,000}$ and $Z_{100,100}$.}
+\label{tab:fixedk}
+\end{table}
+
+Order the variables as follows: first the $D_\tau$, then the $Z_{\tau,\tau'}$, each in lexicographic
+order of the type strings $\tau=\tau_R\tau_{A_1}\tau_{A_3}$. A nonpositive quadratic term
+$c\,v_iv_j$ with $i\le j$ is bounded below by $c\,k\,v_j$, and so it is charged to the later variable. The
+coefficient $\ell'_v$ is the linear coefficient of $v$ in $F_0$ plus all charges made to $v$. The residual
+is $r_v:=\ell'_v-(M^{\mathsf T}y)_v$.
+
+The following table lists $\ell'_v$, $r_v$ and $r_v(10)$ for all $71$ variables. Each $r_v$ is a cubic
+with positive leading coefficient and no real root in $[10,\infty)$; the largest real root of any
+residual is about $8.35$. The minimum of $r_v(10)$ is $443/2$. Finally
+$c_0+\sum_i y_i=k(3k^2+1)/10$. The table is generated, and every row is checked, by the script
+\texttt{certificate\_rebuild.py} in the supplementary material.
+
+% --- begin inlined ues_residuals.tex ---
+{\footnotesize\begin{longtable}{@{}llll@{}}
+\caption{Charged linear coefficients $\ell'_v$ and dual residuals $r_v=\ell'_v-(M^{\mathsf T}y)_v$ for Proposition~\ref{prop:ues}.}\\
+\toprule $v$ & $\ell'_v(k)$ & $10\,r_v(k)$ & $r_v(10)$\\ \midrule \endhead
+$D_{000}$ & $4 k^{3} - 24 k^{2} + 43 k - 19$ & $6 k^{3} + 9 k^{2} + 1836 k - 17927$ & $7333 / 10$\\
+$D_{001}$ & $3 k^{3} - 19 k^{2} + 37 k - 18$ & $13 k^{3} - 74 k^{2} + 907 k - 7129$ & $7541 / 10$\\
+$D_{010}$ & $4 k^{3} - 23 k^{2} + 40 k - 18$ & $6 k^{3} + 19 k^{2} + 1806 k - 17917$ & $8043 / 10$\\
+$D_{011}$ & $2 k^{3} - 12 k^{2} + 24 k - 14$ & $3 k^{3} - 4 k^{2} + 777 k - 7089$ & $3281 / 10$\\
+$D_{100}$ & $2 k^{3} - 14 k^{2} + 29 k - 15$ & $3 k^{3} - 7 k^{2} + 1159 k - 10938$ & $1476 / 5$\\
+$D_{101}$ & $k^{3} - 8 k^{2} + 19 k - 12$ & $10 k^{3} - 80 k^{2} + 190 k - 120$ & $378$\\
+$D_{110}$ & $2 k^{3} - 12 k^{2} + 22 k - 12$ & $3 k^{3} + 13 k^{2} + 1089 k - 10908$ & $2141 / 5$\\
+$Z_{000,000}$ & $5 k^{3} - 28 k^{2} + 48 k - 21$ & $7 k^{3} - 40 k^{2} + 19 k + 50$ & $324$\\
+$Z_{000,001}$ & $4 k^{3} - 24 k^{2} + 44 k - 21$ & $14 k^{3} - 133 k^{2} - 890 k + 10838$ & $1319 / 5$\\
+$Z_{000,010}$ & $6 k^{3} - 32 k^{2} + 51 k - 21$ & $17 k^{3} - 80 k^{2} + 49 k + 50$ & $954$\\
+$Z_{000,011}$ & $4 k^{3} - 23 k^{2} + 42 k - 21$ & $14 k^{3} - 123 k^{2} - 910 k + 10838$ & $1719 / 5$\\
+$Z_{000,100}$ & $4 k^{3} - 24 k^{2} + 44 k - 21$ & $14 k^{3} - 116 k^{2} - 558 k + 6999$ & $3819 / 10$\\
+$Z_{000,101}$ & $3 k^{3} - 19 k^{2} + 36 k - 21$ & $21 k^{3} - 199 k^{2} - 1507 k + 17787$ & $3817 / 10$\\
+$Z_{000,110}$ & $5 k^{3} - 28 k^{2} + 47 k - 21$ & $24 k^{3} - 156 k^{2} - 528 k + 6999$ & $10119 / 10$\\
+$Z_{000,111}$ & $3 k^{3} - 18 k^{2} + 33 k - 21$ & $21 k^{3} - 189 k^{2} - 1537 k + 17787$ & $4517 / 10$\\
+$Z_{001,000}$ & $5 k^{3} - 28 k^{2} + 48 k - 21$ & $24 k^{3} - 173 k^{2} - 850 k + 10838$ & $4519 / 5$\\
+$Z_{001,001}$ & $4 k^{3} - 24 k^{2} + 44 k - 21$ & $31 k^{3} - 266 k^{2} - 1759 k + 21626$ & $4218 / 5$\\
+$Z_{001,010}$ & $6 k^{3} - 32 k^{2} + 51 k - 21$ & $34 k^{3} - 213 k^{2} - 820 k + 10838$ & $7669 / 5$\\
+$Z_{001,011}$ & $4 k^{3} - 23 k^{2} + 42 k - 21$ & $31 k^{3} - 256 k^{2} - 1779 k + 21626$ & $4618 / 5$\\
+$Z_{001,100}$ & $4 k^{3} - 24 k^{2} + 44 k - 21$ & $31 k^{3} - 249 k^{2} - 1427 k + 17787$ & $9617 / 10$\\
+$Z_{001,101}$ & $3 k^{3} - 19 k^{2} + 33 k - 21$ & $38 k^{3} - 332 k^{2} - 2406 k + 28575$ & $1863 / 2$\\
+$Z_{001,110}$ & $5 k^{3} - 28 k^{2} + 47 k - 21$ & $41 k^{3} - 289 k^{2} - 1397 k + 17787$ & $15917 / 10$\\
+$Z_{001,111}$ & $3 k^{3} - 18 k^{2} + 32 k - 21$ & $38 k^{3} - 322 k^{2} - 2416 k + 28575$ & $2043 / 2$\\
+$Z_{010,000}$ & $5 k^{3} - 28 k^{2} + 47 k - 21$ & $7 k^{3} - 40 k^{2} + 9 k + 50$ & $314$\\
+$Z_{010,001}$ & $4 k^{3} - 24 k^{2} + 43 k - 21$ & $14 k^{3} - 133 k^{2} - 900 k + 10838$ & $1269 / 5$\\
+$Z_{010,010}$ & $6 k^{3} - 32 k^{2} + 50 k - 21$ & $17 k^{3} - 80 k^{2} + 39 k + 50$ & $944$\\
+$Z_{010,011}$ & $4 k^{3} - 23 k^{2} + 41 k - 21$ & $14 k^{3} - 123 k^{2} - 920 k + 10838$ & $1669 / 5$\\
+$Z_{010,100}$ & $4 k^{3} - 24 k^{2} + 43 k - 21$ & $14 k^{3} - 116 k^{2} - 568 k + 6999$ & $3719 / 10$\\
+$Z_{010,101}$ & $3 k^{3} - 19 k^{2} + 36 k - 21$ & $21 k^{3} - 199 k^{2} - 1507 k + 17787$ & $3817 / 10$\\
+$Z_{010,110}$ & $5 k^{3} - 28 k^{2} + 46 k - 21$ & $24 k^{3} - 156 k^{2} - 538 k + 6999$ & $10019 / 10$\\
+$Z_{010,111}$ & $3 k^{3} - 18 k^{2} + 33 k - 21$ & $21 k^{3} - 189 k^{2} - 1537 k + 17787$ & $4517 / 10$\\
+$Z_{011,000}$ & $4 k^{3} - 23 k^{2} + 42 k - 21$ & $14 k^{3} - 123 k^{2} - 910 k + 10838$ & $1719 / 5$\\
+$Z_{011,001}$ & $3 k^{3} - 19 k^{2} + 36 k - 21$ & $21 k^{3} - 216 k^{2} - 1839 k + 21626$ & $1318 / 5$\\
+$Z_{011,010}$ & $5 k^{3} - 27 k^{2} + 45 k - 21$ & $24 k^{3} - 163 k^{2} - 880 k + 10838$ & $4869 / 5$\\
+$Z_{011,011}$ & $3 k^{3} - 18 k^{2} + 35 k - 21$ & $21 k^{3} - 206 k^{2} - 1849 k + 21626$ & $1768 / 5$\\
+$Z_{011,100}$ & $3 k^{3} - 19 k^{2} + 38 k - 21$ & $21 k^{3} - 199 k^{2} - 1487 k + 17787$ & $4017 / 10$\\
+$Z_{011,101}$ & $2 k^{3} - 14 k^{2} + 12 k - 21$ & $28 k^{3} - 282 k^{2} - 2616 k + 28575$ & $443 / 2$\\
+$Z_{011,110}$ & $4 k^{3} - 23 k^{2} + 41 k - 21$ & $31 k^{3} - 239 k^{2} - 1457 k + 17787$ & $10317 / 10$\\
+$Z_{011,111}$ & $2 k^{3} - 13 k^{2} + 21 k - 21$ & $28 k^{3} - 272 k^{2} - 2526 k + 28575$ & $823 / 2$\\
+$Z_{100,000}$ & $4 k^{3} - 24 k^{2} + 44 k - 21$ & $14 k^{3} - 116 k^{2} - 558 k + 6999$ & $3819 / 10$\\
+$Z_{100,001}$ & $3 k^{3} - 20 k^{2} + 38 k - 21$ & $21 k^{3} - 209 k^{2} - 1487 k + 17787$ & $3017 / 10$\\
+$Z_{100,010}$ & $5 k^{3} - 28 k^{2} + 47 k - 21$ & $24 k^{3} - 156 k^{2} - 528 k + 6999$ & $10119 / 10$\\
+$Z_{100,011}$ & $3 k^{3} - 19 k^{2} + 38 k - 21$ & $21 k^{3} - 199 k^{2} - 1487 k + 17787$ & $4017 / 10$\\
+$Z_{100,100}$ & $3 k^{3} - 20 k^{2} + 40 k - 21$ & $21 k^{3} - 192 k^{2} - 1135 k + 13948$ & $2199 / 5$\\
+$Z_{100,101}$ & $2 k^{3} - 15 k^{2} + 28 k - 21$ & $28 k^{3} - 275 k^{2} - 2124 k + 24736$ & $1998 / 5$\\
+$Z_{100,110}$ & $4 k^{3} - 24 k^{2} + 43 k - 21$ & $31 k^{3} - 232 k^{2} - 1105 k + 13948$ & $5349 / 5$\\
+$Z_{100,111}$ & $2 k^{3} - 14 k^{2} + 31 k - 21$ & $28 k^{3} - 265 k^{2} - 2094 k + 24736$ & $2648 / 5$\\
+$Z_{101,000}$ & $4 k^{3} - 24 k^{2} + 44 k - 21$ & $31 k^{3} - 249 k^{2} - 1427 k + 17787$ & $9617 / 10$\\
+$Z_{101,001}$ & $3 k^{3} - 20 k^{2} + 38 k - 21$ & $38 k^{3} - 342 k^{2} - 2356 k + 28575$ & $1763 / 2$\\
+$Z_{101,010}$ & $5 k^{3} - 28 k^{2} + 47 k - 21$ & $41 k^{3} - 289 k^{2} - 1397 k + 17787$ & $15917 / 10$\\
+$Z_{101,011}$ & $3 k^{3} - 19 k^{2} + 38 k - 21$ & $38 k^{3} - 332 k^{2} - 2356 k + 28575$ & $1963 / 2$\\
+$Z_{101,100}$ & $3 k^{3} - 20 k^{2} + 40 k - 21$ & $38 k^{3} - 325 k^{2} - 2004 k + 24736$ & $5098 / 5$\\
+$Z_{101,101}$ & $2 k^{3} - 15 k^{2} + 28 k - 21$ & $45 k^{3} - 408 k^{2} - 2993 k + 35524$ & $4897 / 5$\\
+$Z_{101,110}$ & $4 k^{3} - 24 k^{2} + 43 k - 21$ & $48 k^{3} - 365 k^{2} - 1974 k + 24736$ & $8248 / 5$\\
+$Z_{101,111}$ & $2 k^{3} - 14 k^{2} + 31 k - 21$ & $45 k^{3} - 398 k^{2} - 2963 k + 35524$ & $5547 / 5$\\
+$Z_{110,000}$ & $4 k^{3} - 23 k^{2} + 41 k - 21$ & $14 k^{3} - 106 k^{2} - 588 k + 6999$ & $4519 / 10$\\
+$Z_{110,001}$ & $3 k^{3} - 19 k^{2} + 37 k - 21$ & $21 k^{3} - 199 k^{2} - 1497 k + 17787$ & $3917 / 10$\\
+$Z_{110,010}$ & $5 k^{3} - 27 k^{2} + 44 k - 21$ & $24 k^{3} - 146 k^{2} - 558 k + 6999$ & $10819 / 10$\\
+$Z_{110,011}$ & $3 k^{3} - 18 k^{2} + 35 k - 21$ & $21 k^{3} - 189 k^{2} - 1517 k + 17787$ & $4717 / 10$\\
+$Z_{110,100}$ & $3 k^{3} - 19 k^{2} + 37 k - 21$ & $21 k^{3} - 182 k^{2} - 1165 k + 13948$ & $2549 / 5$\\
+$Z_{110,101}$ & $2 k^{3} - 14 k^{2} + 31 k - 21$ & $28 k^{3} - 265 k^{2} - 2094 k + 24736$ & $2648 / 5$\\
+$Z_{110,110}$ & $4 k^{3} - 23 k^{2} + 40 k - 21$ & $31 k^{3} - 222 k^{2} - 1135 k + 13948$ & $5699 / 5$\\
+$Z_{110,111}$ & $2 k^{3} - 13 k^{2} + 28 k - 21$ & $28 k^{3} - 255 k^{2} - 2124 k + 24736$ & $2998 / 5$\\
+$Z_{111,000}$ & $3 k^{3} - 18 k^{2} + 35 k - 21$ & $21 k^{3} - 189 k^{2} - 1517 k + 17787$ & $4717 / 10$\\
+$Z_{111,001}$ & $2 k^{3} - 14 k^{2} + 24 k - 21$ & $28 k^{3} - 282 k^{2} - 2496 k + 28575$ & $683 / 2$\\
+$Z_{111,010}$ & $4 k^{3} - 22 k^{2} + 38 k - 21$ & $31 k^{3} - 229 k^{2} - 1487 k + 17787$ & $11017 / 10$\\
+$Z_{111,011}$ & $2 k^{3} - 13 k^{2} + 29 k - 21$ & $28 k^{3} - 272 k^{2} - 2446 k + 28575$ & $983 / 2$\\
+$Z_{111,100}$ & $2 k^{3} - 14 k^{2} + 31 k - 21$ & $28 k^{3} - 265 k^{2} - 2094 k + 24736$ & $2648 / 5$\\
+$Z_{111,101}$ & $k^{3} - 9 k^{2} + 4 k - 21$ & $35 k^{3} - 348 k^{2} - 3233 k + 35524$ & $1697 / 5$\\
+$Z_{111,110}$ & $3 k^{3} - 18 k^{2} + 34 k - 21$ & $38 k^{3} - 305 k^{2} - 2064 k + 24736$ & $5798 / 5$\\
+$Z_{111,111}$ & $k^{3} - 8 k^{2} + 22 k - 21$ & $35 k^{3} - 338 k^{2} - 3053 k + 35524$ & $3097 / 5$\\
+\bottomrule
+\end{longtable}}
+% --- end inlined ues_residuals.tex ---
+
+\begin{thebibliography}{99}
+
+\bibitem{AM} S.~Allred and J.~A.~Mudrock, \emph{Enumerative chromatic choosability}, preprint,
+  arXiv:2505.05662, 2025.
+
+\bibitem{CLMNW} Y.~Chi, S.~Lee, F.~Morrissette, J.~A.~Mudrock, G.~Nguyen and B.~Whatley,
+  \emph{Enumeratively chromatic-choosable theta graphs}, Enumer.\ Combin.\ Appl.\ \textbf{6}(3) (2026),
+  Article S3R23; arXiv:2605.10861.
+
+\bibitem{DZ23} F.~Dong and M.~Zhang, \emph{An improved lower bound of $P(G,L)-P(G,k)$ for
+  $k$-assignments $L$}, J.\ Combin.\ Theory Ser.\ B \textbf{161} (2023), 109--119; arXiv:2206.14536.
+
+\bibitem{Donner} Q.~Donner, \emph{On the number of list-colorings}, J.\ Graph Theory \textbf{16}
+  (1992), 239--245.
+
+\bibitem{Galvin} F.~Galvin, \emph{The list chromatic index of a bipartite multigraph}, J.\ Combin.\
+  Theory Ser.\ B \textbf{63} (1995), 153--158.
+
+\bibitem{KN} R.~Kirov and R.~Naimi, \emph{List coloring and $n$-monophilic graphs}, Ars Combin.\
+  \textbf{124} (2016), 329--340; arXiv:1004.5183.
+
+\bibitem{KirovLean} R.~Kirov, \emph{enumerative-chromatic-choosability}: a Lean~4 formalization of the
+  list colour function, \url{https://github.com/rkirov/enumerative-chromatic-choosability}, accessed
+  27~September 2026 (commit \texttt{95d4009}).
+
+\bibitem{KS} A.~V.~Kostochka and A.~F.~Sidorenko, \emph{Problem session}, in: Fourth Czechoslovak
+  Symposium on Combinatorics, Graphs and Complexity (J.~Ne\v{s}et\v{r}il and M.~Fiedler, eds.), Ann.\
+  Discrete Math.\ \textbf{51}, North-Holland, Amsterdam, 1992, p.~380.
+
+\bibitem{TagueExact} D.~Tague, \emph{Exact list-edge labelings of bipartite multigraphs: uncrossing,
+  nested minimizers, and a $2$-factor criterion for equality}, preprint, 2026.
+
+\bibitem{Thomassen} C.~Thomassen, \emph{The chromatic polynomial and list colorings}, J.\ Combin.\
+  Theory Ser.\ B \textbf{99} (2009), 474--479.
+
+\bibitem{WQY} W.~Wang, J.~Qian and Z.~Yan, \emph{When does the list-coloring function of a graph equal
+  its chromatic polynomial?}, J.\ Combin.\ Theory Ser.\ B \textbf{122} (2017), 543--549.
+
+\bibitem{ZD26} M.~Zhang and F.~Dong, \emph{When chromatic polynomials coincide with list-color
+  functions: a threshold linear in the maximum degree}, preprint, arXiv:2609.08540, 2026.
+
+\bibitem{ZD26np} M.~Zhang and F.~Dong, \emph{Non-persistence of equality between chromatic polynomials
+  and list-color functions}, preprint, arXiv:2608.19773, 2026.
+
+\end{thebibliography}
+\end{document}
