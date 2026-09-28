@@ -31,4 +31,4 @@ Lemma 5.2: delta_x=sigma_k, delta_gamma, delta_c match brute force for k=4..7
 d_k identities: True True (k - 2)*(k - 1)*(k**2 - 7*k + 13)
 q=1 case: (k - 2)*(k**3 - 8*k**2 + 18*k - 7)  value at k=4: 2
 Lemma 2.1 IE: True
-coef of |I| bound: -(k^2-k)(k-3) check
+coefficient-of-|I| lower bound: k*(k - 3)*(k - 1) verified
