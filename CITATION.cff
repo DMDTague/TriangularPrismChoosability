@@ -7,6 +7,8 @@ authors:
     given-names: Dylan
 repository-code: "https://github.com/DMDTague/TriangularPrismChoosability"
 license: MIT
+version: 1.0.0
+date-released: 2026-09-28
 keywords:
   - graph coloring
   - list coloring
