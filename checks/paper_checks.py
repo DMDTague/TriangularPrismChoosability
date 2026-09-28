@@ -129,4 +129,6 @@ print('d_k identities:', sp.expand(dk - ((k-2)**4 + (k-2))) == 0, sp.expand(o - 
 print('q=1 case:', sp.factor((k-1)*(k-2)*(k**2-7*k+13) - sig), ' value at k=4:', ((k-1)*(k-2)*(k**2-7*k+13) - sig).subs(k, 4))
 ck = k*(k-1)*(k-2)*(k**3-6*k**2+14*k-13)
 print('Lemma 2.1 IE:', sp.expand(k*(k-1)*(k-2) - 3*(k-1)*(k-2) + 3*(k-2) - 1 - (k**3-6*k**2+14*k-13)) == 0)
-print('coef of |I| bound: -(k^2-k)(k-3) check')
+coef_abs_lower = sp.expand((k-1)*(k**2-k) - 2*k*(k-1))
+assert sp.expand(coef_abs_lower - k*(k-1)*(k-3)) == 0
+print('coefficient-of-|I| lower bound:', sp.factor(coef_abs_lower), 'verified')
