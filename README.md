@@ -17,7 +17,6 @@ This repository contains the manuscript and a compact set of exact verification 
 ## Repository layout
 
 - `paper/main.tex` - LaTeX source of the manuscript.
-- `paper/main.pdf` - compiled manuscript.
 - `checks/certificate_rebuild.py` - independently reconstructs the 71-variable unequal-shoulder certificate from the House Lemma formula and verifies the residual table and fixed-\(k\) certificates.
 - `checks/paper_checks.py` - exact symbolic and small-case checks for the equal-pair/equal-shoulder arguments, compensation identities, and related polynomial identities used in the paper.
 - `checks/house_type_enumeration.cpp` - complete membership-type enumeration used for the House Lemma at \(k=4,5\).
@@ -136,7 +135,7 @@ runs the two direct small-universe brute-force examples above.
 make paper
 ```
 
-rebuilds `paper/main.pdf` with `latexmk`.
+builds `paper/main.pdf` locally with `latexmk` (the generated PDF is not tracked in the repository).
 
 ## What is computer-assisted?
 
