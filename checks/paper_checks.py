@@ -2,7 +2,7 @@
 import itertools, sympy as sp
 from pathlib import Path
 _cert = Path(__file__).with_name('certificate_rebuild.py')
-exec(_cert.read_text().split("o = (k - 2)")[0])
+exec(_cert.read_text().split("o = (k - 2)")[0])  # reuse the exact type-count model
 m = sp.symbols('m')
 o = (k - 2) * (k**3 - 6*k**2 + 14*k - 13)
 target = (k - 1) * o
@@ -33,9 +33,11 @@ for pat in pats:
     val = sp.factor(F.subs({Dv[t]: (1 if t in pat else 0) for t in free}))
     print('  pattern', pat, '->', val)
 
+# Case B: types 000,100,011,111 only; j colours of A1\V not in A3. Direct formula with true |I|.
 print('Case B:')
 n000, n100, n011, j = sp.symbols('n000 n100 n011 j')
 def hB(n000_, n100_, n011_, j_, kk):
+    # build explicit lists and brute-force the house count
     V = list(range(kk))
     cnt = {'000': n000_, '100': n100_, '011': n011_}
     cnt['111'] = kk - n000_ - n100_ - n011_
@@ -43,7 +45,7 @@ def hB(n000_, n100_, n011_, j_, kk):
     for t, c in cnt.items(): typ += [t]*c
     Rset = {c for c, t in zip(V, typ) if t[0] == '1'}
     A = {c for c, t in zip(V, typ) if t[1] == '1'}
-    extra = kk - 1 - len(A)
+    extra = kk - 1 - len(A)  # colours of A1 outside V
     out = list(range(100, 100 + extra))
     A1s = A | set(out)
     A3s = A | set(out[j_:]) | set(range(200, 200 + j_))
@@ -65,12 +67,14 @@ for vec, poly in claims.items():
     ok = all(hB(*vec, 1, kk) - (target + qk).subs(k, kk) == poly.subs(k, kk) for kk in range(4, 10))
     print('  ', vec, 'matches claimed value for k=4..9:', ok)
 
+# Prop 4.6 equality example: A1, A3, R = V minus three distinct colours
 for kk in range(4, 10):
     V = set(range(kk))
     val = brute_house(V - {0}, V - {1}, V, V, V - {2})
     assert val == (target + qk).subs(k, kk)
 print('Prop 4.6 equality example attains target+q_k for k=4..9')
 
+# Prop 4.5
 r = sp.symbols('r')
 fC = (k-1)**2*(k-2)**2 - 2*(r-1)*(k-2)**2 + (r-1)*(r-2)
 fV = (k-1)**2*(k-2)**2 - 2*r*(k-2)**2 + r*(r-1)
@@ -82,16 +86,19 @@ print('  D\'(k-1) =', sp.factor(sp.diff(Dr, r).subs(r, k-1)), ' D(k-1)-sigma =',
 print('  r=0 value =', sp.factor(target - (k-1)*fV.subs(r, 0)))
 print('  fC-fV =', sp.factor(fC - fV), ' fO-fC at r=k-1 =', sp.factor((fO - fC).subs(r, k-1)),
       ' fO-fC at r=0:', sp.factor((fO-fC).subs(r, 0)))
+# brute check of f-values: the 4-cycle count with base lists A and shoulder lists V\{y}
 def cyc(A, S):
     return sum(1 for a in A for a2 in A if a2 != a for s in S if s != a for s2 in S if s2 != s and s2 != a2)
 for kk in range(4, 8):
     for rr in range(0, kk):
+        # V = {0..k-1}; A = rr colours of V plus k-1-rr outside
         V = set(range(kk)); A = set(range(rr)) | set(range(50, 50 + kk - 1 - rr))
         for y, f in [(0, fC), (kk-1, fV), (99, fO)]:
             if (y == 0 and rr == 0) or (y == kk-1 and rr == kk): continue
             assert cyc(A, V - {y}) == f.subs({k: kk, r: rr}), (kk, rr, y)
 print('  f_C, f_V, f_O match brute force for k=4..7')
 
+# Lemma 5.2 via brute force F(x',y) in configuration Delta
 def Fxy(L1, L2_, L3, L4_, x, y):
     tot = 0
     for c1 in L1 - {x}:
@@ -115,6 +122,7 @@ for kk in range(4, 8):
 print('Lemma 5.2: delta_x=sigma_k, delta_gamma, delta_c match brute force for k=4..7')
 print('  delta_x+delta_gamma =', sp.factor(sig + dg), '; delta_x+delta_c =', sp.factor(sig + dc))
 print('  positivity after k=4+m:', sp.Poly(sp.expand(-(sig+dg)/2).subs(k,4+m), m).all_coeffs(), sp.Poly(sp.expand(-(sig+dc)/2).subs(k,4+m), m).all_coeffs())
+# Cor 3.3 and Sec 6
 dk = (k-1)*(k-2)*(k**2-5*k+7)
 print('d_k identities:', sp.expand(dk - ((k-2)**4 + (k-2))) == 0, sp.expand(o - dk - sig) == 0,
       sp.factor(k*dk - (k-1)*o))
