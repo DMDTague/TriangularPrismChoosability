@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.DS_Store
+.house_type_enumeration
+.bruteforce_small_universes
+paper/*.aux
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex.gz
