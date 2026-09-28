@@ -1,0 +1,1 @@
+K23 k=3 U=6: assignments=3200000  min N=12  c_k=12  below c_k=0
