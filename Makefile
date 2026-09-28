@@ -1,4 +1,4 @@
-.PHONY: verify brute paper clean
+.PHONY: verify brute house-brute paper clean
 
 verify:
 	python3 checks/certificate_rebuild.py
@@ -9,8 +9,14 @@ verify:
 	@rm -f .house_type_enumeration
 
 brute:
-	cc -O2 checks/bruteforce_small_universes.c -o .bruteforce_small_universes
+	cc -O3 checks/bruteforce_small_universes.c -o .bruteforce_small_universes
 	./.bruteforce_small_universes 1 3 6
+	./.bruteforce_small_universes 1 4 6
+	./.bruteforce_small_universes 1 5 7
+	@rm -f .bruteforce_small_universes
+
+house-brute:
+	cc -O3 checks/bruteforce_small_universes.c -o .bruteforce_small_universes
 	./.bruteforce_small_universes 2 4 8
 	@rm -f .bruteforce_small_universes
 
