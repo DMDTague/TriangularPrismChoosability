@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use these reproducibility materials, please cite the accompanying paper and the archived software release."
+title: "TriangularPrismChoosability: reproducibility materials for The triangular prism is enumeratively chromatic-choosable"
+type: software
+authors:
+  - family-names: Tague
+    given-names: Dylan
+repository-code: "https://github.com/DMDTague/TriangularPrismChoosability"
+version: 1.0.0
+date-released: 2026-09-28
+keywords:
+  - graph coloring
+  - list coloring
+  - enumerative chromatic choosability
+  - triangular prism
+  - K2,3
+  - combinatorics
