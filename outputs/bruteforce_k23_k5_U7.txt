@@ -1,0 +1,1 @@
+K23 k=5 U=7: assignments=4084101  min N=1920  c_k=1920  below c_k=0
