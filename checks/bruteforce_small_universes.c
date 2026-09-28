@@ -12,6 +12,7 @@ static void prep(int U) { for (int i = 0; i < ns; i++) { cnt[i] = 0; for (int c 
 int main(int argc, char **argv) {
   int mode = atoi(argv[1]), k = atoi(argv[2]), U = atoi(argv[3]);
   if (mode == 1) {
+    // edges e1=ua e2=av e3=ub e4=bv e5=uw e6=wv. u: e1 e3 e5 ; v: e2 e4 e6; a: e1 e2; b: e3 e4; w: e5 e6
     long ck = (long)k*(k-1)*(k-2)*((long)k*k*k - 6*k*k + 14*k - 13);
     gen(U, k); prep(U);
     int L5 = (1 << k) - 1, i5 = -1; for (int i = 0; i < ns; i++) if (subsets[i] == L5) i5 = i;
@@ -33,7 +34,7 @@ int main(int argc, char **argv) {
     int nb, nk; static int B[4096], S[4096];
     gen(U, k-1); prep(U); nb = ns; int eb[4096][16]; for (int i = 0; i < nb; i++) { B[i] = subsets[i]; for (int t = 0; t < k-1; t++) eb[i][t] = elems[i][t]; }
     gen(U, k); prep(U); nk = ns;
-    int L2 = (1 << k) - 1; long configs = 0, below = 0, minD = 1L<<60;
+    int L2 = (1 << k) - 1; long configs = 0, below = 0, minD = 1L<<60; int ex[5];
     for (int i4 = 0; i4 < nk; i4++) for (int ia = 0; ia < nb; ia++) for (int ic = 0; ic < nb; ic++) for (int ir = 0; ir < nb; ir++) {
       int L4 = subsets[i4];
       long h = 0;
