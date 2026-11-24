@@ -1,0 +1,1 @@
+K23 k=4 U=6: assignments=759375  min N=264  c_k=264  below c_k=0

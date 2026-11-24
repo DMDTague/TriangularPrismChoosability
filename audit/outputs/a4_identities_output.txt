@@ -1,0 +1,28 @@
+PASS Lemma 2.1: c_k equals brute-force proper k-edge-colourings of K_{2,3}, k=3..6
+PASS o_k - d_k = sigma_k
+PASS d_k = (k-2)^4 + (k-2) = P(C4, k-1)
+PASS d_3 = o_3 = 2
+PASS Lemma 3.1: N_L = sum_{x in A} S(x) on 300 random assignments
+PASS Cor 3.3(ii): k d_k - (k-1) o_k = (k-1)(k-2)(k^2-7k+13)
+PASS House count formula (general base sizes) = brute force, 400 random cases, k=4,5
+PASS Lemma 3.4: S(x) = house count, 200 random assignments
+PASS f_C as displayed
+PASS f_V as displayed
+PASS f_O as displayed
+PASS f_C, f_V, f_O match brute force, k=4..6, all r
+PASS D(r) quadratic in r with leading coefficient 3-k
+PASS D'(k-1) = (k-3)(2k^2-8k+9)
+PASS D(k-1) = sigma_k
+PASS D(k-2) = -2(k-3)(k^2-5k+7)
+PASS r=0 value = -(k-1)(k-2)(2k^2-9k+11)
+PASS f_O - f_C at r=k-1 = 2(k-2)(k^2-4k+5)
+PASS 2(k-2)(k^2-4k+5) > sigma_k for k>=4
+PASS Delta attains target - sigma_k (brute force, k=4..7)
+PASS Prop 4.6 equality example attains target + q_k (k=4..7)
+PASS q_k > 0 for k >= 4 (coefficients after k=4+m)
+PASS Lemma 5.2: delta_x = sigma_k, delta_gamma, delta_c match brute force (k=4..7)
+PASS delta_x + delta_gamma = -2(k^4-5k^3+9k^2-3k-5)
+PASS delta_x + delta_c = -2(2k^3-14k^2+36k-33)
+PASS both brackets have positive coefficients after k=4+m
+PASS q=1: (k-1)(k-2)(k^2-7k+13) - sigma_k = (k-2)(k^3-8k^2+18k-7)
+  k^3-8k^2+18k-7 at k=4..7: [1, 8, 29, 70] | after k=4+m: [1, 4, 2, 1]

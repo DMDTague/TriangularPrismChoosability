@@ -1,0 +1,1 @@
+k=3, at most 1000 colours: count vectors=2406208  min N=12  c_k=12  below c_k=0

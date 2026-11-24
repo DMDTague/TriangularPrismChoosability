@@ -1,0 +1,5 @@
+k=5 |A1|=4 |A3|=4: count vectors=1182983, below target=1
+k=5 |A1|=4 |A3|=5: count vectors=1905595, below target=0
+k=5 |A1|=5 |A3|=4: count vectors=1905595, below target=0
+k=5 |A1|=5 |A3|=5: count vectors=3171098, below target=0
+k=5 TOTAL count vectors=8165271  min(h-target)=-12  -sigma_k=-12  below target=1  non-Delta below target=0

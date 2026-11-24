@@ -1,0 +1,3 @@
+k=6: 2955 random unequal-shoulder assignments; formula (4) = brute force; h - target >= F0(v) > 0 in all; min F0(v) = 120
+k=7: 2973 random unequal-shoulder assignments; formula (4) = brute force; h - target >= F0(v) > 0 in all; min F0(v) = 319
+All model-validation checks passed.

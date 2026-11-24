@@ -70,8 +70,9 @@ Following Allred and Mudrock~\cite{AM} and Chi et al.~\cite{CLMNW}, a graph $G$ 
 \emph{enumeratively chromatic-choosable} if $\Pl(G,m)=P(G,m)$ for every $m\in\mathbb N$. Equality at
 one fixed $m$ is the older notion of an \emph{$m$-monophilic} graph, due to Kirov and Naimi~\cite{KN}.
 Zhang and Dong~\cite{ZD26np} showed that equality at $m$ need not persist to $m+1$, so equality has to
-be established at every $m$ separately. Allred and Mudrock~\cite[Theorem~4]{AM} showed that chordal
-graphs, cycles and $K_{2,3}$ are enumeratively chromatic-choosable, and characterised the enumeratively
+be established at every $m$ separately. Chordal graphs, cycles and $K_{2,3}$ are enumeratively
+chromatic-choosable; Allred and Mudrock~\cite[Theorem~4]{AM} collect these results from the literature
+(for cycles, see Kirov and Naimi~\cite[Theorem~1]{KN}), and they characterised the enumeratively
 chromatic-choosable graphs of chromatic number two. Chi et al.~\cite{CLMNW} studied theta graphs. All of
 these results concern vertex colourings of the graphs named; in particular, the result for $K_{2,3}$
 concerns $K_{2,3}$ itself and not its line graph, which is the prism studied here.
@@ -193,8 +194,9 @@ Note that $d_k=(k-2)^4+(k-2)=P(C_4,k-1)$, that $o_k-d_k=\sigma_k$, and that $d_3
 \begin{enumerate}[label=(F\arabic*)]
 \item\label{F:mono} \emph{Monotonicity.} Enlarging lists cannot decrease the number of list colourings.
 In particular, if $|L(v)|\ge m$ for every vertex, then $P(G,L)\ge \Pl(G,m)$.
-\item\label{F:cycle} \emph{Cycles.} Cycles are enumeratively chromatic-choosable
-\cite[Theorem~4(ii)]{AM}. In particular, if $|L(v)|\ge m$ for every vertex of $C_4$, then
+\item\label{F:cycle} \emph{Cycles.} Every cycle is $m$-monophilic for every $m\ge2$
+\cite[Theorem~1]{KN}; that is, cycles are enumeratively chromatic-choosable (see also
+\cite[Theorem~4(ii)]{AM}). In particular, if $|L(v)|\ge m$ for every vertex of $C_4$, then
 $P(C_4,L)\ge (m-1)^4+(m-1)$.
 \end{enumerate}
 
@@ -586,52 +588,51 @@ $k=9$.
 \begin{center}\small
 \begin{tabular}{@{}lrrrrrr@{}}
 \toprule
-$k$ & 4 & 5 & 6 & 7 & 8 & 9\\
+$k$ & 4 & 5\\
 \midrule
-type configurations & 49{,}394 & 519{,}800 & 4{,}231{,}446 & 28{,}203{,}597 & 159{,}948{,}947 & 793{,}435{,}085\\
-$\min(h-\mathrm{target})$ & $-4$ & $-12$ & $-24$ & $-40$ & $-60$ & $-84$\\
-configurations with $h<\mathrm{target}$ & 1 & 1 & 1 & 1 & 1 & 1\\
+type configurations & 49{,}394 & 519{,}800\\
+$\min(h-\mathrm{target})$ & $-4$ & $-12$\\
+configurations with $h<\mathrm{target}$ & 1 & 1\\
 \bottomrule
 \end{tabular}
 \end{center}
 
-In each case $\min(h-\mathrm{target})=-\sigma_k$, and the unique configuration below the target is
-$\Delta$. For $6\le k\le 9$ this agrees with the analytic proof. The proof itself needs the complete
-enumeration only for $k=4,5$. The public reproducibility package supplies the complete enumerator and
-recorded outputs for those two values. During development the same census was also run through $k=9$,
-and two further independent implementations were used as cross-checks on overlapping ranges; all agreed
-with the values in the table. Those additional audit implementations are not part of the public release.
+In both cases $\min(h-\mathrm{target})=-\sigma_k$, and the unique configuration below the target is
+$\Delta$. The public reproducibility package supplies the enumerator and recorded outputs for these two
+values. An independent census in a different parametrization, which also enumerates base lists of size
+$k$ and therefore checks Lemma~\ref{lem:size} directly, gives the same conclusion for $k=4,5$ and, as a
+cross-check of the analytic proof, for $k=6$; it is included in the \texttt{audit/} directory of the
+package.
 
 \subsection{Independent verification}
-The proof-critical computations were cross-checked independently during development. The public
-reproducibility package contains a direct rebuild of the dual certificate, symbolic and small-case
-checks of the displayed identities, the complete type enumeration required for $k=4,5$, and direct
-small-universe checks of the full theorem. Additional independent audit implementations were used
-during development but are not included in the public release. All checks agree:
+The public reproducibility package contains a direct rebuild of the dual certificate, symbolic and
+small-case checks of the displayed identities, the complete type enumeration required for $k=4,5$, and
+direct small-universe checks of the full theorem. Its \texttt{audit/} directory contains a second,
+separately written implementation of the proof-critical computations, with recorded outputs. All checks
+agree:
 \begin{itemize}
 \item the counting formula \eqref{eq:shoulder}, compared with brute-force counts of house colourings;
 \item Proposition~\ref{prop:es}, rebuilt symbolically, with the same table of coefficients and the same
   minimal patterns;
-\item Proposition~\ref{prop:ues}. The polynomial certificate was re-derived twice, each time including
-  the $2{,}348/82$ split of the quadratic coefficients and the exact dual inequalities. The certificates
-  of Table~\ref{tab:fixedk} were checked by rebuilding the $71$ columns of $M$ from the definition in
-  Appendix~\ref{app:ues};
-\item the type enumeration of Section~\ref{sec:computation}: the supplied implementation reproduces
-  the proof-critical $k=4,5$ cases, while the additional development implementations agreed on their
-  overlapping ranges;
+\item Proposition~\ref{prop:ues}. The polynomial certificate was re-derived by both implementations,
+  each including the $2{,}348/82$ split of the quadratic coefficients and the exact dual inequalities,
+  and all $71$ rows of the appendix table agree. The certificates of Table~\ref{tab:fixedk} were checked
+  by rebuilding the $71$ columns of $M$ from the definition in Appendix~\ref{app:ues}. The
+  $71$-variable model was also compared with brute-force house counts on random assignments;
+\item the type enumeration of Section~\ref{sec:computation}, by two implementations with different
+  parametrizations, for $k=4,5$ (and $k=6$ as a cross-check);
 \item the identities in Lemma~\ref{lem:cyclebound}, Corollary~\ref{cor:easy},
   Proposition~\ref{prop:equalpairs} and Lemma~\ref{lem:pair}, re-derived symbolically and compared
   with brute-force counts for small $k$;
-\item the whole of Theorem~\ref{thm:main}, compared with direct brute-force counts for normalized
-  small colour universes at $k=3,4,5$; the supplied program and recorded outputs attain respectively
-  $c_3=12$, $c_4=264$ and $c_5=1920$, with no smaller count.
+\item the whole of Theorem~\ref{thm:main}, compared with direct counts at $k=3,4,5$: over every
+  colour universe for $k=3$, over universes of at most $10$ colours for $k=4$ and at most $8$ for
+  $k=5$. The minima are $c_3=12$, $c_4=264$ and $c_5=1920$, with no smaller count.
 \end{itemize}
 
 \subsection*{Data and code availability}
 The manuscript source, verification programs, recorded outputs and reproduction commands are publicly
-available at \url{https://github.com/DMDTague/TriangularPrismChoosability}. The archival software
-release will be tagged \texttt{v1.0.0} before submission. Its Zenodo DOI will be inserted here after
-the release has been archived.
+available at \url{https://github.com/DMDTague/TriangularPrismChoosability}, release \texttt{v1.1.0}.
+% TODO: insert the Zenodo DOI of the archived v1.1.0 release (v1.0.0 predates the audit/ directory).
 
 % =====================================================================
 \section{Discussion}\label{sec:discussion}
@@ -778,8 +779,8 @@ $Z_{111,111}$ & $k^{3} - 8 k^{2} + 22 k - 21$ & $35 k^{3} - 338 k^{2} - 3053 k +
 
 \begin{thebibliography}{99}
 
-\bibitem{AM} S.~Allred and J.~A.~Mudrock, \emph{Enumerative chromatic choosability}, preprint,
-  arXiv:2505.05662, 2025.
+\bibitem{AM} S.~Allred and J.~A.~Mudrock, \emph{Enumerative chromatic choosability}, Electron.\ J.\
+  Combin.\ \textbf{33}(4) (2026), Paper P4.6, doi:10.37236/14176; arXiv:2505.05662.
 
 \bibitem{CLMNW} Y.~Chi, S.~Lee, F.~Morrissette, J.~A.~Mudrock, G.~Nguyen and B.~Whatley,
   \emph{Enumeratively chromatic-choosable theta graphs}, Enumer.\ Combin.\ Appl.\ \textbf{6}(3) (2026),
@@ -806,7 +807,8 @@ $Z_{111,111}$ & $k^{3} - 8 k^{2} + 22 k - 21$ & $35 k^{3} - 338 k^{2} - 3053 k +
   Discrete Math.\ \textbf{51}, North-Holland, Amsterdam, 1992, p.~380.
 
 \bibitem{TagueExact} D.~Tague, \emph{Exact list-edge labelings of bipartite multigraphs: uncrossing,
-  nested minimizers, and a $2$-factor criterion for equality}, preprint, 2026.
+  nested minimizers, and a $2$-factor criterion for equality}, preprint v1.0.0, Zenodo, 2026,
+  doi:10.5281/zenodo.23018085.
 
 \bibitem{Thomassen} C.~Thomassen, \emph{The chromatic polynomial and list colorings}, J.\ Combin.\
   Theory Ser.\ B \textbf{99} (2009), 474--479.

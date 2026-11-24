@@ -1,0 +1,5 @@
+inclusion-exclusion count = brute force on 150 random K_{2,3} assignments (k=3,4)
+C4, m=2: 139 count vectors, min colourings = 2, P(C4,m) = 2, ok = True
+C4, m=3: 862 count vectors, min colourings = 18, P(C4,m) = 18, ok = True
+C4, m=4: 4079 count vectors, min colourings = 84, P(C4,m) = 84, ok = True
+C4, m=5: 15791 count vectors, min colourings = 260, P(C4,m) = 260, ok = True

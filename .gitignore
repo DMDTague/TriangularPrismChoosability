@@ -11,3 +11,7 @@ paper/*.out
 paper/*.toc
 paper/*.synctex.gz
 paper/main.pdf
+.a3_house_census
+.a5_prism_census
+.F0.pkl
+*.pkl

@@ -1,0 +1,2 @@
+k=4: formula validated vs brute force on 400 random configs
+k=4: type-configs=49394  min(S-target)=-4 (=-smax=-4? yes)  deficient=1  deficient outside family=0  min(S-target) outside family=0

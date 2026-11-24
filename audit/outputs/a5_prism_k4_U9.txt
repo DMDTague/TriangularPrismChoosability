@@ -1,0 +1,1 @@
+k=4, at most 9 colours: count vectors=14471961  min N=264  c_k=264  below c_k=0

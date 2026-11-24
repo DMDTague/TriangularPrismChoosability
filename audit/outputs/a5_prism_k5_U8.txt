@@ -1,0 +1,1 @@
+k=5, at most 8 colours: count vectors=1000904  min N=1920  c_k=1920  below c_k=0

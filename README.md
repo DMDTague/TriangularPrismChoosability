@@ -22,6 +22,7 @@ This repository contains the manuscript and a compact set of exact verification 
 - `checks/house_type_enumeration.cpp` - complete membership-type enumeration used for the House Lemma at $k=4,5$.
 - `checks/bruteforce_small_universes.c` - direct small-universe brute-force checks of the prism theorem and House Lemma.
 - `outputs/` - recorded outputs for the principal checks.
+- `audit/` - independent re-implementation of the proof-critical computations, with recorded outputs and an audit report (added in v1.1.0).
 
 ## Requirements
 
@@ -153,9 +154,27 @@ The mathematical reduction and assembly of the proof are given in the manuscript
 
 All arithmetic in the supplied verification programs is exact except for the displayed decimal approximation of the largest real root; the proof uses exact real-root isolation.
 
-## Archival citation
+## Independent audit (v1.1.0)
 
-A versioned release of this repository is intended to be archived on Zenodo. The Zenodo DOI and the arXiv identifier will be added here and to the manuscript once minted.
+`audit/` contains a second, separately written implementation of the proof-critical computations. It covers:
+- the dual certificate, with all 71 appendix rows;
+- the House Lemma census for k = 4, 5 and 6;
+- the displayed identities;
+- direct checks of the theorem.
+
+It also includes recorded outputs and an audit report, `audit/REPORT.md`. Run it with
+
+```bash
+make audit        # about 2.5 minutes
+make audit-long   # about 15 minutes
+```
+
+## Releases and archival citation
+
+- `v1.0.0` (commit `87bd5d4`, 28 September 2026): the original reproducibility package, kept unchanged.
+- `v1.1.0`: adds `audit/`, and revises the manuscript's citations and its computation section (§7). The mathematics is unchanged.
+
+The Zenodo DOI of the archived v1.1.0 release will be added here and to the manuscript once minted.
 
 
 ## License

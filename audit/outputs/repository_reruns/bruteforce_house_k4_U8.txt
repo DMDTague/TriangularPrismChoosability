@@ -1,0 +1,1 @@
+House k=4 U=8: configs=12293120  min(h-target)=-4  sigma_k=4  configs below target=12 (all Delta unless flagged)
